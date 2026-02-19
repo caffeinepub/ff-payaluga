@@ -1,0 +1,259 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "FF PAYALUGA Free Fire Tournament Platform - Frontend Implementation",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement user authentication UI with registration and login forms using the authorization component",
+      "acceptanceCriteria": [
+        "Users can register with email and password",
+        "System generates unique User ID automatically on registration",
+        "Users can log in with registered credentials",
+        "User ID is stored and retrievable from backend"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/LoginRegister.tsx",
+          "operation": "create",
+          "description": "Create authentication page with tabbed interface for login and registration forms. Use the authorization component to handle Internet Identity authentication. Include email and password fields for registration, collect user name on first login, and use saveCallerUserProfile to store user profile. Display generated User ID after successful registration. Apply Free Fire gaming theme with dark backgrounds and animated buttons. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/RegistrationForm.tsx",
+          "operation": "create",
+          "description": "Create registration form component with email, password, and name fields. Handle form validation and submission. Call saveCallerUserProfile with UserProfile data after Internet Identity authentication. Display success message with generated User ID. Apply gaming-themed styling with input animations."
+        },
+        {
+          "path": "frontend/src/components/LoginForm.tsx",
+          "operation": "create",
+          "description": "Create login form component using the authorization component's Internet Identity login. Display login button that triggers useInternetIdentity hook. Show loading state during authentication. Redirect to dashboard after successful login. Apply Free Fire themed button styles with hover animations."
+        },
+        {
+          "path": "frontend/src/hooks/useAuth.ts",
+          "operation": "create",
+          "description": "Create authentication hook wrapping the authorization component's useInternetIdentity. Provide login, logout, and authentication state management. Handle user profile retrieval using getCallerUserProfile. Clear query cache on logout as per component instructions. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "create",
+          "description": "Create modal for first-time user profile setup. Show only when user is authenticated but has no profile (using getCallerUserProfile returns null). Collect user name and email. Prevent modal flash by checking actor availability before showing. Use pattern from authorization component to avoid premature display. Apply dark gaming theme with Free Fire visual elements."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Create wallet UI with balance display, deposit form with validation, and Google Pay QR code display",
+      "acceptanceCriteria": [
+        "Each user has a wallet with coin balance initialized to 0",
+        "Deposit form validates minimum ₹10 and maximum ₹100",
+        "Google Pay QR code displays after deposit amount submission",
+        "Pending deposits are stored with user ID, amount, and timestamp"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/WalletDeposit.tsx",
+          "operation": "create",
+          "description": "Create wallet page displaying current coin balance using getUserBalance backend method. Include deposit form with amount input field. Validate minimum ₹10 and maximum ₹100 before submission. Show Google Pay QR code image from frontend/public/assets/generated/gpay-qr-code.dim_300x300.png after user submits valid deposit amount. Display pending deposit status and transaction history. Use wallet icon from frontend/public/assets/generated/wallet-icon.dim_128x128.png. Apply Free Fire gaming theme with dark backgrounds."
+        },
+        {
+          "path": "frontend/src/components/DepositForm.tsx",
+          "operation": "create",
+          "description": "Create deposit form component with amount input and validation. Enforce ₹10 minimum and ₹100 maximum constraints with inline error messages. Call deposit backend method on submission. Display loading state during request. Show success state with QR code display. Apply gaming-themed input styling with animations."
+        },
+        {
+          "path": "frontend/src/components/QRCodeDisplay.tsx",
+          "operation": "create",
+          "description": "Create QR code display component showing the Google Pay QR code from frontend/public/assets/generated/gpay-qr-code.dim_300x300.png. Display submitted amount and instructions for payment. Show pending status indicator. Apply Free Fire themed container with glowing effects."
+        },
+        {
+          "path": "frontend/src/components/WalletBalance.tsx",
+          "operation": "create",
+          "description": "Create wallet balance display component showing coin balance using getUserBalance. Display balance with coin icon from frontend/public/assets/generated/wallet-icon.dim_128x128.png. Auto-refresh after deposit approval. Apply gaming-themed card styling with Free Fire colors."
+        },
+        {
+          "path": "frontend/src/hooks/useWallet.ts",
+          "operation": "create",
+          "description": "Create wallet hook managing balance state and deposit operations. Fetch balance using getUserBalance backend method. Handle deposit submission with deposit method. Provide loading and error states. Use React Query for caching and auto-refresh."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Build admin deposit verification UI showing pending requests with approve/reject actions",
+      "acceptanceCriteria": [
+        "Admin panel displays list of pending deposit requests",
+        "Each request shows user ID, amount, and timestamp",
+        "Admin can approve deposits with one-click action",
+        "Approved deposits add coins to user wallet at 1₹ = 1 Coin rate",
+        "Deposit status updates from pending to approved"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/DepositVerification.tsx",
+          "operation": "create",
+          "description": "Create admin deposit verification component displaying list of pending deposit requests using getPendingDepositRequests backend method. Show user ID, amount, timestamp, and status for each request. Include approve and reject buttons calling approveDeposit and rejectDeposit methods. Display success confirmation after action. Auto-refresh list after approval/rejection. Apply Free Fire gaming theme with dark card layouts."
+        },
+        {
+          "path": "frontend/src/components/admin/DepositRequestCard.tsx",
+          "operation": "create",
+          "description": "Create deposit request card component displaying individual request details. Show user ID, deposit amount in rupees, timestamp formatted as date/time, and current status. Include approve and reject action buttons with confirmation dialogs. Apply esports-inspired card styling with hover effects."
+        },
+        {
+          "path": "frontend/src/hooks/useAdminDeposits.ts",
+          "operation": "create",
+          "description": "Create admin deposits hook fetching pending requests using getPendingDepositRequests. Handle approve and reject operations with approveDeposit and rejectDeposit methods. Manage loading states and error handling. Use React Query for automatic refresh after mutations."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Implement tournament join UI with Free Fire UID and WhatsApp collection, wallet balance validation, and entry fee deduction",
+      "acceptanceCriteria": [
+        "Tournament join form collects Free Fire UID and WhatsApp number",
+        "System validates user has sufficient wallet balance before allowing join",
+        "Entry fee is deducted from wallet balance upon successful join",
+        "User join details (UID, phone number, timestamp) appear in admin dashboard immediately",
+        "Users cannot join if wallet balance is insufficient"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/TournamentJoinForm.tsx",
+          "operation": "create",
+          "description": "Create tournament join form collecting Free Fire UID and WhatsApp phone number. Validate user has sufficient balance using getUserBalance and getEntryFee backend methods before enabling submit button. Display current balance and entry fee prominently. Call joinTournament method with UID and phone number on submission. Show insufficient balance error if balance is too low. Display success confirmation after successful join. Apply Free Fire gaming theme with animated submit button."
+        },
+        {
+          "path": "frontend/src/hooks/useTournament.ts",
+          "operation": "create",
+          "description": "Create tournament hook managing tournament state and join operations. Fetch tournament info using getTournamentInfo and check if entry is open with isTournamentEntryOpen. Handle join submission with joinTournament method. Validate sufficient balance before submission. Provide loading and error states. Use React Query for state management."
+        },
+        {
+          "path": "frontend/src/components/TournamentStatusBanner.tsx",
+          "operation": "create",
+          "description": "Create tournament status banner displaying whether tournament is open or closed using isTournamentEntryOpen. Show entry fee amount from getEntryFee. Display match time and count from getTournamentInfo. Apply prominent gaming-themed banner styling with Free Fire colors and animations."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Create admin control panel UI with user management, tournament configuration controls, and join request viewing",
+      "acceptanceCriteria": [
+        "Admin panel displays complete list of registered users with their unique IDs",
+        "Admin can view all tournament join requests with UID and phone numbers",
+        "Admin can set and update tournament entry fee amount",
+        "Admin can configure match time and schedule",
+        "Admin can toggle tournament status between Open and Closed",
+        "Only open tournaments accept new join requests"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminPanel.tsx",
+          "operation": "create",
+          "description": "Create admin panel page accessible only to admin users. Use authorization component's isCallerAdmin to guard access and show AccessDeniedScreen for unauthorized users. Include sections for user management, deposit verification, tournament configuration, and join request viewing. Apply Free Fire gaming theme with dark dashboard layout. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/UserManagement.tsx",
+          "operation": "create",
+          "description": "Create user management component displaying all registered users using getAllUsers backend method. Show user ID, name, email, and principal for each user. Display in searchable table format. Apply dark gaming theme with Free Fire aesthetic."
+        },
+        {
+          "path": "frontend/src/components/admin/TournamentConfig.tsx",
+          "operation": "create",
+          "description": "Create tournament configuration component with controls to set entry fee using setEntryFee, configure match time with setMatchTime, update match count with setMatchCount, and toggle tournament status with setTournamentEntryOpen. Display current tournament info using getTournamentInfo. Include form inputs with validation and update buttons. Apply esports-inspired form styling with animated controls."
+        },
+        {
+          "path": "frontend/src/components/admin/JoinRequestsList.tsx",
+          "operation": "create",
+          "description": "Create join requests list component showing all tournament join requests using getAllTournamentJoinRequests backend method. Display player Free Fire UID, WhatsApp number, join timestamp, and entry fee paid. Format as table with search and filter capabilities. Auto-refresh when new requests arrive. Apply Free Fire gaming theme with dark table styling."
+        },
+        {
+          "path": "frontend/src/components/admin/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Create access denied screen component for unauthorized users attempting admin access. Display error message indicating admin-only access. Provide navigation back to public pages. Apply Free Fire themed error screen with gaming aesthetics."
+        },
+        {
+          "path": "frontend/src/hooks/useAdminTournament.ts",
+          "operation": "create",
+          "description": "Create admin tournament hook managing tournament configuration. Handle updates using updateTournament method. Fetch all join requests with getAllTournamentJoinRequests. Provide methods to set entry fee, match time, match count, and status. Use React Query for state management and mutations."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Design Free Fire gaming themed UI with dark backgrounds, gaming elements, animations, and mobile responsive layouts throughout the application",
+      "acceptanceCriteria": [
+        "All pages use dark background color scheme",
+        "Buttons have hover and click animations",
+        "Visual design reflects Free Fire gaming aesthetic",
+        "Layout is fully responsive on mobile devices (320px to 480px widths)",
+        "Touch targets are appropriately sized for mobile interaction",
+        "All text is readable on dark backgrounds"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add Free Fire gaming theme styles with dark background colors (#0a0e1a, #1a1f2e), gaming accent colors (orange #ff6b00, cyan #00d9ff), and custom CSS animations for buttons and UI elements. Include hover and click animations for interactive elements. Define typography styles optimized for dark backgrounds with high contrast. Add mobile-responsive breakpoints and touch-friendly sizing rules. Use gaming background texture from frontend/public/assets/generated/gaming-bg-texture.dim_1920x1080.png as body background."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Extend Tailwind config with Free Fire gaming theme colors, custom animations, and responsive breakpoints. Add custom color palette including dark backgrounds, gaming accent colors (ff-orange, ff-cyan), and contrast text colors. Define custom animations for button hover, glow effects, and pulse animations. Configure mobile-first responsive breakpoints for 320px to 480px ranges. Add custom spacing for touch-friendly mobile interactions."
+        },
+        {
+          "path": "frontend/src/components/layout/Layout.tsx",
+          "operation": "create",
+          "description": "Create main layout component wrapping all pages with consistent Free Fire gaming theme. Include navigation header with Free Fire logo from frontend/public/assets/generated/ff-logo.dim_200x200.png. Apply dark background with gaming texture from frontend/public/assets/generated/gaming-bg-texture.dim_1920x1080.png. Ensure mobile responsive layout with collapsible navigation. Include footer with branding. Apply esports-inspired design with glowing borders and animated elements."
+        },
+        {
+          "path": "frontend/src/components/common/GamingButton.tsx",
+          "operation": "create",
+          "description": "Create reusable gaming-themed button component with hover animations, click effects, and loading states. Include variants for primary, secondary, and danger actions. Apply Free Fire color scheme with gradient backgrounds and glow effects. Ensure touch-friendly sizing for mobile (minimum 44px height). Add pulse animation on hover and scale effect on click."
+        },
+        {
+          "path": "frontend/src/components/common/GamingCard.tsx",
+          "operation": "create",
+          "description": "Create reusable gaming-themed card component for displaying content sections. Apply dark background with subtle border glow effects. Include hover animations with elevation changes. Ensure mobile responsive padding and spacing. Use Free Fire visual motifs with accent borders."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Create six-page application structure with Home, Login/Register, Dashboard, Wallet/Deposit, Tournament, and Admin Panel pages with navigation routing",
+      "acceptanceCriteria": [
+        "Home page welcomes users and provides navigation",
+        "Login/Register page handles authentication",
+        "Dashboard displays user wallet balance and tournament information",
+        "Wallet/Deposit page allows deposits and shows transaction history",
+        "Tournament Page displays available tournaments and join functionality",
+        "Admin Panel accessible only to admin users with full management controls"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Home.tsx",
+          "operation": "create",
+          "description": "Create home page with Free Fire themed hero section using hero banner from frontend/public/assets/generated/ff-hero-banner.dim_1200x400.png. Display welcome message, platform introduction, and call-to-action buttons for registration and tournament joining. Include tournament status overview and feature highlights. Apply gaming aesthetic with dark backgrounds and animated elements. Ensure mobile responsive layout with touch-friendly navigation."
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "create",
+          "description": "Create user dashboard page displaying wallet balance using WalletBalance component, current tournament status using TournamentStatusBanner, and quick action buttons for deposits and tournament joining. Show user profile information with name and User ID. Display recent activity and pending deposits. Guard with authentication check requiring logged-in user. Apply Free Fire gaming theme with dashboard cards and esports layout."
+        },
+        {
+          "path": "frontend/src/pages/TournamentPage.tsx",
+          "operation": "create",
+          "description": "Create tournament page displaying active Free Fire Clash Squad 1v1 tournaments. Show tournament details using getTournamentInfo including entry fee, match time, and status. Include TournamentJoinForm component for joining. Display tournament icon from frontend/public/assets/generated/tournament-icon.dim_128x128.png. Show user's joined tournaments if applicable. Guard with authentication requiring logged-in user. Apply gaming theme with tournament brackets visual style."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire all six pages into React Router with routes: / for Home, /login for LoginRegister, /dashboard for Dashboard, /wallet for WalletDeposit, /tournament for TournamentPage, and /admin for AdminPanel. Wrap routes with Layout component for consistent navigation and theme. Add authentication guards for protected routes (dashboard, wallet, tournament, admin). Include route for profile setup modal when user has no profile. Ensure navigation menu in Layout links to all routes."
+        },
+        {
+          "path": "frontend/src/components/layout/Navigation.tsx",
+          "operation": "create",
+          "description": "Create navigation component with links to all six pages. Show authenticated menu items (Dashboard, Wallet, Tournament) only when user is logged in. Show Admin link only for admin users using isCallerAdmin check from authorization component. Include login/logout button using authorization component's pattern. Apply Free Fire gaming theme with animated menu items. Ensure mobile responsive with hamburger menu for small screens. Display Free Fire logo from frontend/public/assets/generated/ff-logo.dim_200x200.png in navigation header. Verify the authorization component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}

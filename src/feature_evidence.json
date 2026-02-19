@@ -1,0 +1,138 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-user-authentication-system-with-email-and-password-registration-upon-successful-registration-automatically-generate-and-assign-a-unique-user-id-to-each-user-store-user-credentials-email-and-generated-id-in-the-backend",
+      "featureTitle": "Implement user authentication system with email and password registration. Upon successful registration, automatically generate and assign a unique User ID to each user. Store user credentials, email, and generated ID in the backend.",
+      "files": [
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/pages/LoginRegister.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-wallet-system-for-each-user-with-coin-balance-tracking-implement-deposit-functionality-where-users-can-enter-amounts-between-10-and-100-display-a-google-pay-qr-code-when-user-submits-a-deposit-request-store-pending-deposit-requests-with-amount-and-timestamp",
+      "featureTitle": "Create a wallet system for each user with coin balance tracking. Implement deposit functionality where users can enter amounts between ₹10 and ₹100. Display a Google Pay QR code when user submits a deposit request. Store pending deposit requests with amount and timestamp.",
+      "files": [
+        "frontend/src/pages/WalletDeposit.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-admin-deposit-verification-system-admin-can-view-all-pending-deposit-requests-with-user-details-and-submitted-amounts-admin-can-approve-deposits-and-manually-add-equivalent-coins-to-user-wallets-using-1-1-coin-conversion-rate",
+      "featureTitle": "Build admin deposit verification system. Admin can view all pending deposit requests with user details and submitted amounts. Admin can approve deposits and manually add equivalent coins to user wallets using 1₹ = 1 Coin conversion rate.",
+      "files": [
+        "frontend/src/components/admin/DepositVerification.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-comprehensive-admin-control-panel-with-user-management-tournament-configuration-and-match-scheduling-admin-can-view-all-registered-users-with-their-ids-manage-tournament-status-open-closed-set-tournament-entry-fee-set-match-time-and-customize-match-schedule-admin-can-view-all-tournament-join-requests-with-player-uid-and-whatsapp-numbers",
+      "featureTitle": "Create comprehensive admin control panel with user management, tournament configuration, and match scheduling. Admin can view all registered users with their IDs, manage tournament status (Open/Closed), set tournament entry fee, set match time, and customize match schedule. Admin can view all tournament join requests with player UID and WhatsApp numbers.",
+      "files": [
+        "frontend/src/components/admin/AccessDeniedScreen.tsx",
+        "frontend/src/components/admin/JoinRequestsList.tsx",
+        "frontend/src/components/admin/TournamentConfig.tsx",
+        "frontend/src/components/admin/UserManagement.tsx",
+        "frontend/src/pages/AdminPanel.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-design-and-implement-free-fire-gaming-themed-ui-with-dark-background-throughout-the-application-use-gaming-style-elements-including-animated-buttons-esports-inspired-layouts-and-free-fire-visual-motifs-ensure-all-pages-are-fully-mobile-responsive-with-touch-friendly-controls-and-adaptive-layouts",
+      "featureTitle": "Design and implement Free Fire gaming themed UI with dark background throughout the application. Use gaming-style elements including animated buttons, esports-inspired layouts, and Free Fire visual motifs. Ensure all pages are fully mobile responsive with touch-friendly controls and adaptive layouts.",
+      "files": [
+        "frontend/src/components/common/GamingButton.tsx",
+        "frontend/src/components/common/GamingCard.tsx",
+        "frontend/src/components/layout/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-six-page-application-structure-home-page-landing-welcome-login-register-page-authentication-forms-dashboard-user-overview-with-wallet-balance-and-tournament-status-wallet-deposit-page-deposit-form-and-transaction-history-tournament-page-join-form-and-active-tournaments-and-admin-panel-user-management-deposit-verification-tournament-control",
+      "featureTitle": "Create six-page application structure: Home page (landing/welcome), Login/Register page (authentication forms), Dashboard (user overview with wallet balance and tournament status), Wallet/Deposit page (deposit form and transaction history), Tournament Page (join form and active tournaments), and Admin Panel (user management, deposit verification, tournament control).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/Navigation.tsx",
+        "frontend/src/pages/Dashboard.tsx",
+        "frontend/src/pages/Home.tsx",
+        "frontend/src/pages/TournamentPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

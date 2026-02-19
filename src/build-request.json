@@ -1,0 +1,190 @@
+{
+  "kind": "build_request",
+  "title": "Build FF PAYALUGA Free Fire Tournament Platform",
+  "projectName": "FF PAYALUGA",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement user authentication system with email and password registration. Upon successful registration, automatically generate and assign a unique User ID to each user. Store user credentials, email, and generated ID in the backend.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Users must register using: Email, Password",
+          "A unique User ID should be automatically generated"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can register with email and password",
+        "System generates unique User ID automatically on registration",
+        "Users can log in with registered credentials",
+        "User ID is stored and retrievable from backend"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Create a wallet system for each user with coin balance tracking. Implement deposit functionality where users can enter amounts between ₹10 and ₹100. Display a Google Pay QR code when user submits a deposit request. Store pending deposit requests with amount and timestamp.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Users must have a wallet system",
+          "Minimum deposit: ₹10, Maximum deposit: ₹100",
+          "My Google Pay QR code should be displayed"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each user has a wallet with coin balance initialized to 0",
+        "Deposit form validates minimum ₹10 and maximum ₹100",
+        "Google Pay QR code displays after deposit amount submission",
+        "Pending deposits are stored with user ID, amount, and timestamp"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Build admin deposit verification system. Admin can view all pending deposit requests with user details and submitted amounts. Admin can approve deposits and manually add equivalent coins to user wallets using 1₹ = 1 Coin conversion rate.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin will manually verify payment",
+          "Admin can add equivalent coins to user wallet",
+          "Coins should match deposited amount (1₹ = 1 Coin)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin panel displays list of pending deposit requests",
+        "Each request shows user ID, amount, and timestamp",
+        "Admin can approve deposits with one-click action",
+        "Approved deposits add coins to user wallet at 1₹ = 1 Coin rate",
+        "Deposit status updates from pending to approved"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement tournament join system for Free Fire Clash Squad 1v1 mode. Users must provide their Free Fire UID and WhatsApp phone number when joining. Automatically deduct the tournament entry fee from user's wallet balance. Send user UID, phone number, and join timestamp to admin dashboard instantly.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Users can join tournament using wallet coins",
+          "User must provide: Free Fire UID, WhatsApp phone number",
+          "Tournament entry fee should be automatically deducted from wallet",
+          "User UID and phone number must be sent to admin dashboard instantly"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Tournament join form collects Free Fire UID and WhatsApp number",
+        "System validates user has sufficient wallet balance before allowing join",
+        "Entry fee is deducted from wallet balance upon successful join",
+        "User join details (UID, phone number, timestamp) appear in admin dashboard immediately",
+        "Users cannot join if wallet balance is insufficient"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Create comprehensive admin control panel with user management, tournament configuration, and match scheduling. Admin can view all registered users with their IDs, manage tournament status (Open/Closed), set tournament entry fee, set match time, and customize match schedule. Admin can view all tournament join requests with player UID and WhatsApp numbers.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin must be able to: View all registered users, View user IDs",
+          "Set tournament entry fee, Set match time, Customize match schedule",
+          "Manage tournament status (Open / Closed)",
+          "See player UID + WhatsApp number"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin panel displays complete list of registered users with their unique IDs",
+        "Admin can view all tournament join requests with UID and phone numbers",
+        "Admin can set and update tournament entry fee amount",
+        "Admin can configure match time and schedule",
+        "Admin can toggle tournament status between Open and Closed",
+        "Only open tournaments accept new join requests"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Design and implement Free Fire gaming themed UI with dark background throughout the application. Use gaming-style elements including animated buttons, esports-inspired layouts, and Free Fire visual motifs. Ensure all pages are fully mobile responsive with touch-friendly controls and adaptive layouts.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Full Free Fire gaming theme",
+          "Dark background, Gaming UI style, Animated buttons",
+          "Mobile responsive design",
+          "Attractive esports layout"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All pages use dark background color scheme",
+        "Buttons have hover and click animations",
+        "Visual design reflects Free Fire gaming aesthetic",
+        "Layout is fully responsive on mobile devices (320px to 480px widths)",
+        "Touch targets are appropriately sized for mobile interaction",
+        "All text is readable on dark backgrounds"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Create six-page application structure: Home page (landing/welcome), Login/Register page (authentication forms), Dashboard (user overview with wallet balance and tournament status), Wallet/Deposit page (deposit form and transaction history), Tournament Page (join form and active tournaments), and Admin Panel (user management, deposit verification, tournament control).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Home, Login / Register, Dashboard, Wallet / Deposit, Tournament Page, Admin Panel"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Home page welcomes users and provides navigation",
+        "Login/Register page handles authentication",
+        "Dashboard displays user wallet balance and tournament information",
+        "Wallet/Deposit page allows deposits and shows transaction history",
+        "Tournament Page displays available tournaments and join functionality",
+        "Admin Panel accessible only to admin users with full management controls"
+      ]
+    }
+  ],
+  "constraints": [
+    "Use Free Fire Clash Squad 1v1 mode only",
+    "Minimum deposit amount must be ₹10",
+    "Maximum deposit amount must be ₹100",
+    "Coin conversion rate must be exactly 1₹ = 1 Coin",
+    "Deposit verification must be manual by admin",
+    "Room ID and password distribution handled manually by admin via WhatsApp"
+  ],
+  "nonGoals": [
+    "Automatic deposit verification or payment gateway integration",
+    "Automated room creation in Free Fire",
+    "Automated WhatsApp message sending",
+    "Match result tracking or scoring system",
+    "Public tournament listings or search functionality",
+    "Multi-game support beyond Free Fire Clash Squad 1v1"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Free Fire themed hero banner with dark gaming aesthetic and esports elements (ff-hero-banner.dim_1200x400.png)",
+      "Google Pay QR code placeholder for deposit payments (gpay-qr-code.dim_300x300.png)",
+      "Free Fire logo for branding throughout the application (ff-logo.dim_200x200.png)",
+      "Dark gaming background texture for page backgrounds (gaming-bg-texture.dim_1920x1080.png)",
+      "Tournament icon with Free Fire Clash Squad theme (tournament-icon.dim_128x128.png)",
+      "Wallet/coin icon matching Free Fire visual style (wallet-icon.dim_128x128.png)"
+    ],
+    "edits": []
+  }
+}

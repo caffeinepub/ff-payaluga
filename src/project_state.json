@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "FF PAYALUGA is a private Free Fire esports tournament web application where users register with auto-generated IDs, deposit funds (₹10-₹100) via Google Pay QR, join 1v1 Clash Squad tournaments using wallet coins, and submit their FF UID + WhatsApp number. Features a comprehensive admin panel for deposit verification, coin management, tournament control, and player detail viewing. Dark Free Fire gaming theme with mobile-responsive design.",
+  "architectural_notes": [
+    "Private access web application with manual link sharing",
+    "Manual admin verification workflow for deposits and coin additions",
+    "Manual room creation and WhatsApp-based room detail distribution by admin",
+    "Auto-generated unique user IDs upon registration",
+    "Real-time tournament join requests sent to admin dashboard"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Free Fire themed hero banner with dark gaming aesthetic and esports elements (ff-hero-banner.dim_1200x400.png)\n- Google Pay QR code placeholder for deposit payments (gpay-qr-code.dim_300x300.png)\n- Free Fire logo for branding throughout the application (ff-logo.dim_200x200.png)\n- Dark gaming background texture for page backgrounds (gaming-bg-texture.dim_1920x1080.png)\n- Tournament icon with Free Fire Clash Squad theme (tournament-icon.dim_128x128.png)\n- Wallet/coin icon matching Free Fire visual style (wallet-icon.dim_128x128.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-user-authentication-system-with-email-and-password-registration-upon-successful-registration-automatically-generate-and-assign-a-unique-user-id-to-each-user-store-user-credentials-email-and-generated-id-in-the-backend",
+      "title": "Implement user authentication system with email and password registration. Upon successful registration, automatically generate and assign a unique User ID to each user. Store user credentials, email, and generated ID in the backend.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-wallet-system-for-each-user-with-coin-balance-tracking-implement-deposit-functionality-where-users-can-enter-amounts-between-10-and-100-display-a-google-pay-qr-code-when-user-submits-a-deposit-request-store-pending-deposit-requests-with-amount-and-timestamp",
+      "title": "Create a wallet system for each user with coin balance tracking. Implement deposit functionality where users can enter amounts between ₹10 and ₹100. Display a Google Pay QR code when user submits a deposit request. Store pending deposit requests with amount and timestamp.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-admin-deposit-verification-system-admin-can-view-all-pending-deposit-requests-with-user-details-and-submitted-amounts-admin-can-approve-deposits-and-manually-add-equivalent-coins-to-user-wallets-using-1-1-coin-conversion-rate",
+      "title": "Build admin deposit verification system. Admin can view all pending deposit requests with user details and submitted amounts. Admin can approve deposits and manually add equivalent coins to user wallets using 1₹ = 1 Coin conversion rate.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-comprehensive-admin-control-panel-with-user-management-tournament-configuration-and-match-scheduling-admin-can-view-all-registered-users-with-their-ids-manage-tournament-status-open-closed-set-tournament-entry-fee-set-match-time-and-customize-match-schedule-admin-can-view-all-tournament-join-requests-with-player-uid-and-whatsapp-numbers",
+      "title": "Create comprehensive admin control panel with user management, tournament configuration, and match scheduling. Admin can view all registered users with their IDs, manage tournament status (Open/Closed), set tournament entry fee, set match time, and customize match schedule. Admin can view all tournament join requests with player UID and WhatsApp numbers.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-and-implement-free-fire-gaming-themed-ui-with-dark-background-throughout-the-application-use-gaming-style-elements-including-animated-buttons-esports-inspired-layouts-and-free-fire-visual-motifs-ensure-all-pages-are-fully-mobile-responsive-with-touch-friendly-controls-and-adaptive-layouts",
+      "title": "Design and implement Free Fire gaming themed UI with dark background throughout the application. Use gaming-style elements including animated buttons, esports-inspired layouts, and Free Fire visual motifs. Ensure all pages are fully mobile responsive with touch-friendly controls and adaptive layouts.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-six-page-application-structure-home-page-landing-welcome-login-register-page-authentication-forms-dashboard-user-overview-with-wallet-balance-and-tournament-status-wallet-deposit-page-deposit-form-and-transaction-history-tournament-page-join-form-and-active-tournaments-and-admin-panel-user-management-deposit-verification-tournament-control",
+      "title": "Create six-page application structure: Home page (landing/welcome), Login/Register page (authentication forms), Dashboard (user overview with wallet balance and tournament status), Wallet/Deposit page (deposit form and transaction history), Tournament Page (join form and active tournaments), and Admin Panel (user management, deposit verification, tournament control).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Authentication system with email/password login and auto-generated unique user IDs",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Wallet system with ₹10-₹100 deposit limits, Google Pay QR code display, and coin management (1₹ = 1 Coin)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Tournament join system for 1v1 Clash Squad with FF UID and WhatsApp submission, automatic wallet deduction",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Admin panel for user management, deposit verification, coin addition, tournament control, and player detail viewing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Free Fire gaming theme with dark UI, animated buttons, and mobile-responsive design",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Six-page structure: Home, Login/Register, Dashboard, Wallet/Deposit, Tournament Page, Admin Panel",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Implement tournament join system for Free Fire Clash Squad 1v1 mode. Users must provide their Free Fire UID and WhatsApp phone number when joining. Automatically deduct the tournament entry fee from user's wallet balance. Send user UID, phone number, and join timestamp to admin dashboard instantly.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "FF PAYALUGA",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
