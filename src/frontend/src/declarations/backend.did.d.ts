@@ -29,6 +29,11 @@ export interface AdminUpdateTournamentRequest {
   'matchCount' : [] | [bigint],
   'entryFee' : [] | [bigint],
 }
+export interface DirectDeposit {
+  'userId' : UserId,
+  'timestamp' : Time,
+  'amount' : bigint,
+}
 export interface MatchInfo {
   'playerUID' : string,
   'matchTime' : Time,
@@ -86,6 +91,8 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'adminDirectDeposit' : ActorMethod<[UserId, bigint], undefined>,
+  'adminDirectDepositByPrincipal' : ActorMethod<[Principal, bigint], undefined>,
   'approveDeposit' : ActorMethod<[bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'deposit' : ActorMethod<[bigint], bigint>,
@@ -98,6 +105,7 @@ export interface _SERVICE {
   'getBalanceByUserId' : ActorMethod<[UserId], bigint>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getDirectDepositHistory' : ActorMethod<[], Array<DirectDeposit>>,
   'getEntryFee' : ActorMethod<[], bigint>,
   'getPendingDepositRequests' : ActorMethod<[], Array<AdminDepositRequest>>,
   'getPendingTournaments' : ActorMethod<[], Array<MatchInfo>>,

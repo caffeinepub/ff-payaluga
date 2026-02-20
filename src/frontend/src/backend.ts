@@ -89,23 +89,9 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface AdminDepositRequest {
-    status: Variant_pending_approved_rejected;
-    userId: UserId;
-    userPrincipal: Principal;
-    timestamp: Time;
-    amount: bigint;
-}
-export type UserId = bigint;
 export type Time = bigint;
 export interface _CaffeineStorageRefillInformation {
     proposed_top_up_amount?: bigint;
-}
-export interface AdminUpdateTournamentRequest {
-    matchTime?: Time;
-    status?: boolean;
-    matchCount?: bigint;
-    entryFee?: bigint;
 }
 export interface TournamentJoinRequest {
     freeFireUid: string;
@@ -123,16 +109,35 @@ export interface _CaffeineStorageCreateCertificateResult {
     method: string;
     blob_hash: string;
 }
+export interface MatchInfo {
+    playerUID: string;
+    matchTime: Time;
+    whatsappNumber: string;
+}
+export interface AdminDepositRequest {
+    status: Variant_pending_approved_rejected;
+    userId: UserId;
+    userPrincipal: Principal;
+    timestamp: Time;
+    amount: bigint;
+}
+export type UserId = bigint;
+export interface DirectDeposit {
+    userId: UserId;
+    timestamp: Time;
+    amount: bigint;
+}
+export interface AdminUpdateTournamentRequest {
+    matchTime?: Time;
+    status?: boolean;
+    matchCount?: bigint;
+    entryFee?: bigint;
+}
 export interface TournamentInfo {
     matchTime: Time;
     status: boolean;
     matchCount: bigint;
     entryFee: bigint;
-}
-export interface MatchInfo {
-    playerUID: string;
-    matchTime: Time;
-    whatsappNumber: string;
 }
 export interface UserProfile {
     userId: UserId;
@@ -161,6 +166,8 @@ export interface backendInterface {
     _caffeineStorageRefillCashier(refillInformation: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult>;
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    adminDirectDeposit(userId: UserId, amount: bigint): Promise<void>;
+    adminDirectDepositByPrincipal(userPrincipal: Principal, amount: bigint): Promise<void>;
     approveDeposit(requestId: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deposit(amount: bigint): Promise<bigint>;
@@ -170,6 +177,7 @@ export interface backendInterface {
     getBalanceByUserId(userId: UserId): Promise<bigint>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getDirectDepositHistory(): Promise<Array<DirectDeposit>>;
     getEntryFee(): Promise<bigint>;
     getPendingDepositRequests(): Promise<Array<AdminDepositRequest>>;
     getPendingTournaments(): Promise<Array<MatchInfo>>;
@@ -291,6 +299,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor._initializeAccessControlWithSecret(arg0);
+            return result;
+        }
+    }
+    async adminDirectDeposit(arg0: UserId, arg1: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminDirectDeposit(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminDirectDeposit(arg0, arg1);
+            return result;
+        }
+    }
+    async adminDirectDepositByPrincipal(arg0: Principal, arg1: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminDirectDepositByPrincipal(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminDirectDepositByPrincipal(arg0, arg1);
             return result;
         }
     }
@@ -418,6 +454,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getCallerUserRole();
             return from_candid_UserRole_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getDirectDepositHistory(): Promise<Array<DirectDeposit>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getDirectDepositHistory();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getDirectDepositHistory();
+            return result;
         }
     }
     async getEntryFee(): Promise<bigint> {

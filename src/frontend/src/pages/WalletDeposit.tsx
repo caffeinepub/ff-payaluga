@@ -2,21 +2,27 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useGetUserBalance, useDeposit } from '../hooks/useQueries';
+import { useActor } from '../hooks/useActor';
 import GamingCard from '../components/common/GamingCard';
 import GamingButton from '../components/common/GamingButton';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Wallet, Coins, QrCode } from 'lucide-react';
+import { Wallet, Coins, Copy, Check, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function WalletDeposit() {
   const { identity } = useInternetIdentity();
+  const { actor, isFetching: actorFetching } = useActor();
   const navigate = useNavigate();
   const { data: balance, isLoading: balanceLoading } = useGetUserBalance();
   const deposit = useDeposit();
   const [amount, setAmount] = useState('');
-  const [showQR, setShowQR] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const isAuthenticated = !!identity;
+  const UPI_ID = 'NIRANJAN0508@FAM';
+  const actorAvailable = !!actor && !actorFetching;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,15 +32,28 @@ export default function WalletDeposit() {
 
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!actorAvailable) {
+      toast.error('System is initializing. Please wait a moment and try again.');
+      return;
+    }
+
     const amountNum = parseInt(amount);
     if (amountNum < 10 || amountNum > 100) {
       return;
     }
     deposit.mutate(amountNum, {
       onSuccess: () => {
-        setShowQR(true);
+        setShowPayment(true);
       },
     });
+  };
+
+  const handleCopyUPI = () => {
+    navigator.clipboard.writeText(UPI_ID);
+    setCopied(true);
+    toast.success('UPI ID copied to clipboard!');
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (!isAuthenticated) {
@@ -66,6 +85,16 @@ export default function WalletDeposit() {
         </div>
       </GamingCard>
 
+      {/* Actor Status Warning */}
+      {!actorAvailable && (
+        <GamingCard glowColor="orange">
+          <div className="flex items-center space-x-3 text-ff-orange">
+            <AlertCircle size={24} />
+            <p className="text-sm">System is initializing... Please wait a moment before making a deposit.</p>
+          </div>
+        </GamingCard>
+      )}
+
       {/* Deposit Form */}
       <GamingCard glowColor="cyan">
         <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center">
@@ -87,6 +116,7 @@ export default function WalletDeposit() {
               onChange={(e) => setAmount(e.target.value)}
               className="bg-background border-muted-foreground/20 focus:border-ff-cyan text-lg"
               required
+              disabled={!actorAvailable}
             />
             <p className="text-sm text-muted-foreground">
               1₹ = 1 Coin • Minimum: ₹10 • Maximum: ₹100
@@ -95,40 +125,89 @@ export default function WalletDeposit() {
           <GamingButton
             type="submit"
             className="w-full"
-            disabled={deposit.isPending || !amount || parseInt(amount) < 10 || parseInt(amount) > 100}
+            disabled={deposit.isPending || !amount || parseInt(amount) < 10 || parseInt(amount) > 100 || !actorAvailable}
           >
             {deposit.isPending ? 'Processing...' : 'Submit Deposit Request'}
           </GamingButton>
         </form>
       </GamingCard>
 
-      {/* QR Code Display */}
-      {showQR && (
+      {/* UPI Payment Display */}
+      {showPayment && (
         <GamingCard glowColor="orange">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-6">
             <div className="flex items-center justify-center space-x-2">
-              <QrCode className="text-ff-orange" size={28} />
+              <Wallet className="text-ff-orange" size={28} />
               <h2 className="text-2xl font-bold text-foreground">Complete Payment</h2>
             </div>
-            <p className="text-muted-foreground">
-              Scan the QR code below with Google Pay to complete your deposit of ₹{amount}
+            <p className="text-muted-foreground text-lg">
+              Pay ₹{amount} using the UPI ID below
             </p>
-            <div className="bg-white p-4 rounded-lg inline-block">
-              <img
-                src="/assets/generated/gpay-qr-code.dim_300x300.png"
-                alt="Google Pay QR Code"
-                className="w-64 h-64 mx-auto"
-              />
+
+            {/* UPI ID Display */}
+            <div className="bg-gradient-to-br from-ff-orange/20 to-ff-orange/5 border-2 border-ff-orange/50 rounded-xl p-6 space-y-4">
+              <p className="text-sm font-semibold text-ff-orange uppercase tracking-wide">UPI ID</p>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <p className="text-3xl md:text-4xl font-bold text-foreground font-mono break-all">
+                  {UPI_ID}
+                </p>
+                <button
+                  onClick={handleCopyUPI}
+                  className="flex-shrink-0 p-3 bg-ff-orange hover:bg-ff-orange/80 text-background rounded-lg transition-all active:scale-95"
+                  aria-label="Copy UPI ID"
+                >
+                  {copied ? <Check size={24} /> : <Copy size={24} />}
+                </button>
+              </div>
             </div>
+
+            {/* Payment Instructions */}
+            <div className="bg-background/50 border border-muted-foreground/20 rounded-lg p-6 text-left space-y-3">
+              <h3 className="text-lg font-bold text-foreground mb-3">Payment Steps:</h3>
+              <ol className="space-y-2 text-muted-foreground">
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
+                    1
+                  </span>
+                  <span>Open your UPI payment app (Google Pay, PhonePe, Paytm, etc.)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
+                    2
+                  </span>
+                  <span>Select "Send Money" or "Pay to UPI ID"</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
+                    3
+                  </span>
+                  <span>Enter or paste the UPI ID: <strong className="text-ff-orange">{UPI_ID}</strong></span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
+                    4
+                  </span>
+                  <span>Enter the amount: <strong className="text-ff-orange">₹{amount}</strong></span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
+                    5
+                  </span>
+                  <span>Complete the payment and wait for admin verification</span>
+                </li>
+              </ol>
+            </div>
+
             <div className="bg-ff-orange/10 border border-ff-orange/30 rounded-lg p-4">
               <p className="text-sm text-foreground">
                 <strong>Important:</strong> After completing the payment, please wait for admin verification.
                 Your coins will be added to your wallet once the payment is confirmed.
               </p>
             </div>
+
             <GamingButton
               onClick={() => {
-                setShowQR(false);
+                setShowPayment(false);
                 setAmount('');
               }}
               variant="secondary"
@@ -153,13 +232,13 @@ export default function WalletDeposit() {
             <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
               2
             </span>
-            <span>Click "Submit Deposit Request" to see the Google Pay QR code</span>
+            <span>Click "Submit Deposit Request" to see the UPI payment details</span>
           </li>
           <li className="flex items-start">
             <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">
               3
             </span>
-            <span>Scan the QR code with Google Pay and complete the payment</span>
+            <span>Use the provided UPI ID to complete the payment via your UPI app</span>
           </li>
           <li className="flex items-start">
             <span className="flex-shrink-0 w-6 h-6 bg-ff-orange rounded-full flex items-center justify-center text-background text-sm font-bold mr-3">

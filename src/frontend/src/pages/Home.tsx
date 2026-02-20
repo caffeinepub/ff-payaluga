@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { Trophy, Wallet, Shield, Zap, Target, Users } from 'lucide-react';
 import GamingButton from '../components/common/GamingButton';
 import GamingCard from '../components/common/GamingCard';
-import { Trophy, Wallet, Shield, Zap } from 'lucide-react';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -10,136 +10,202 @@ export default function Home() {
   const isAuthenticated = !!identity;
 
   return (
-    <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="relative rounded-2xl overflow-hidden">
-        <img
-          src="/assets/generated/ff-hero-banner.dim_1200x400.png"
-          alt="FF PAYALUGA Hero"
-          className="w-full h-64 md:h-96 object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent flex items-end">
-          <div className="p-8 md:p-12 w-full">
-            <h1 className="text-4xl md:text-6xl font-bold text-ff-orange mb-4 animate-pulse">
-              FF PAYALUGA
-            </h1>
-            <p className="text-xl md:text-2xl text-foreground mb-6">
-              Join the Ultimate Free Fire 1v1 Clash Squad Tournament
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              {isAuthenticated ? (
-                <>
-                  <GamingButton onClick={() => navigate({ to: '/tournament' })} size="lg">
-                    <Trophy className="mr-2" size={20} />
-                    Join Tournament
-                  </GamingButton>
-                  <GamingButton onClick={() => navigate({ to: '/dashboard' })} variant="secondary" size="lg">
-                    View Dashboard
-                  </GamingButton>
-                </>
-              ) : (
-                <GamingButton onClick={() => navigate({ to: '/login' })} size="lg">
-                  Get Started
+    <div className="space-y-16">
+      {/* Hero Section with Battle Background */}
+      <section className="relative py-20 px-4 rounded-2xl overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url(/assets/generated/ff-header-bg.dim_1200x400.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.3
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-ff-orange/20 via-transparent to-background/80 z-0"></div>
+        
+        <div className="relative z-10 text-center max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-ff-orange text-shadow-ff font-gaming tracking-tight">
+            FREE FIRE BATTLE ARENA
+          </h1>
+          <p className="text-xl md:text-2xl text-foreground/90 mb-8 font-medium">
+            Join the ultimate Free Fire tournament platform. Compete, Win, Dominate!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {isAuthenticated ? (
+              <>
+                <GamingButton
+                  onClick={() => navigate({ to: '/tournament' })}
+                  variant="primary"
+                  size="lg"
+                  className="shadow-ff-glow"
+                >
+                  <Trophy className="mr-2" size={20} />
+                  Join Tournament
                 </GamingButton>
-              )}
-            </div>
+                <GamingButton
+                  onClick={() => navigate({ to: '/dashboard' })}
+                  variant="secondary"
+                  size="lg"
+                >
+                  <Target className="mr-2" size={20} />
+                  View Dashboard
+                </GamingButton>
+              </>
+            ) : (
+              <GamingButton
+                onClick={() => navigate({ to: '/login' })}
+                variant="primary"
+                size="lg"
+                className="shadow-ff-glow animate-pulse-glow"
+              >
+                <Zap className="mr-2" size={20} />
+                Get Started Now
+              </GamingButton>
+            )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Features Section */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <GamingCard glowColor="orange">
-          <div className="flex flex-col items-center text-center space-y-3">
-            <div className="p-4 bg-ff-orange/20 rounded-full">
-              <Trophy className="text-ff-orange" size={32} />
+      <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <GamingCard glowColor="orange" className="text-center hover:scale-105 transition-transform">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-ff-orange/20 rounded-full border-2 border-ff-orange/40">
+              <Trophy className="w-8 h-8 text-ff-orange" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">1v1 Tournaments</h3>
-            <p className="text-muted-foreground">
-              Compete in intense Free Fire Clash Squad 1v1 matches
-            </p>
           </div>
+          <h3 className="text-xl font-bold mb-2 text-ff-orange font-gaming">Epic Tournaments</h3>
+          <p className="text-muted-foreground">
+            Compete in high-stakes Free Fire tournaments with real rewards
+          </p>
         </GamingCard>
 
-        <GamingCard glowColor="cyan">
-          <div className="flex flex-col items-center text-center space-y-3">
-            <div className="p-4 bg-ff-cyan/20 rounded-full">
-              <Wallet className="text-ff-cyan" size={32} />
+        <GamingCard glowColor="cyan" className="text-center hover:scale-105 transition-transform">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-ff-cyan/20 rounded-full border-2 border-ff-cyan/40">
+              <Wallet className="w-8 h-8 text-ff-cyan" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">Easy Deposits</h3>
-            <p className="text-muted-foreground">
-              Deposit ₹10-₹100 via Google Pay and get instant coins
-            </p>
           </div>
+          <h3 className="text-xl font-bold mb-2 text-ff-cyan font-gaming">Instant Deposits</h3>
+          <p className="text-muted-foreground">
+            Quick and secure coin deposits via UPI payment
+          </p>
         </GamingCard>
 
-        <GamingCard glowColor="orange">
-          <div className="flex flex-col items-center text-center space-y-3">
-            <div className="p-4 bg-ff-orange/20 rounded-full">
-              <Zap className="text-ff-orange" size={32} />
+        <GamingCard glowColor="orange" className="text-center hover:scale-105 transition-transform">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-ff-gold/20 rounded-full border-2 border-ff-gold/40">
+              <Users className="w-8 h-8 text-ff-gold" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">Quick Matches</h3>
-            <p className="text-muted-foreground">
-              Fast-paced matches with instant room details via WhatsApp
-            </p>
           </div>
+          <h3 className="text-xl font-bold mb-2 text-ff-gold font-gaming">Battle Matches</h3>
+          <p className="text-muted-foreground">
+            Track your matches and compete with the best players
+          </p>
         </GamingCard>
 
-        <GamingCard glowColor="cyan">
-          <div className="flex flex-col items-center text-center space-y-3">
-            <div className="p-4 bg-ff-cyan/20 rounded-full">
-              <Shield className="text-ff-cyan" size={32} />
+        <GamingCard glowColor="cyan" className="text-center hover:scale-105 transition-transform">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-ff-cyan/20 rounded-full border-2 border-ff-cyan/40">
+              <Shield className="w-8 h-8 text-ff-cyan" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">Secure Platform</h3>
-            <p className="text-muted-foreground">
-              Safe and verified tournament management system
-            </p>
           </div>
+          <h3 className="text-xl font-bold mb-2 text-ff-cyan font-gaming">Secure Platform</h3>
+          <p className="text-muted-foreground">
+            Built on Internet Computer with top-tier security
+          </p>
         </GamingCard>
-      </div>
+      </section>
 
-      {/* How It Works */}
-      <GamingCard className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-ff-orange mb-6 text-center">How It Works</h2>
-        <div className="space-y-4">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-ff-orange rounded-full flex items-center justify-center text-background font-bold">
+      {/* How It Works Section */}
+      <section className="max-w-4xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-12 text-ff-orange text-shadow-ff font-gaming">
+          HOW IT WORKS
+        </h2>
+        <div className="space-y-6">
+          <GamingCard glowColor="orange" className="flex items-start space-x-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-ff-orange/20 rounded-full flex items-center justify-center border-2 border-ff-orange/40 font-bold text-ff-orange text-xl">
               1
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Register & Login</h4>
-              <p className="text-muted-foreground">Create your account and get a unique User ID</p>
+              <h3 className="text-xl font-bold mb-2 text-ff-orange font-gaming">Login & Register</h3>
+              <p className="text-muted-foreground">
+                Create your account using Internet Identity for secure authentication
+              </p>
             </div>
-          </div>
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-ff-orange rounded-full flex items-center justify-center text-background font-bold">
+          </GamingCard>
+
+          <GamingCard glowColor="cyan" className="flex items-start space-x-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-ff-cyan/20 rounded-full flex items-center justify-center border-2 border-ff-cyan/40 font-bold text-ff-cyan text-xl">
               2
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Deposit Coins</h4>
-              <p className="text-muted-foreground">Add funds to your wallet via Google Pay (₹10-₹100)</p>
+              <h3 className="text-xl font-bold mb-2 text-ff-cyan font-gaming">Deposit Coins</h3>
+              <p className="text-muted-foreground">
+                Add coins to your wallet via UPI (₹10-₹100) to enter tournaments
+              </p>
             </div>
-          </div>
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-ff-orange rounded-full flex items-center justify-center text-background font-bold">
+          </GamingCard>
+
+          <GamingCard glowColor="orange" className="flex items-start space-x-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-ff-orange/20 rounded-full flex items-center justify-center border-2 border-ff-orange/40 font-bold text-ff-orange text-xl">
               3
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Join Tournament</h4>
-              <p className="text-muted-foreground">Enter your Free Fire UID and WhatsApp number to join</p>
+              <h3 className="text-xl font-bold mb-2 text-ff-orange font-gaming">Join Tournament</h3>
+              <p className="text-muted-foreground">
+                Enter active tournaments with your Free Fire UID and WhatsApp number
+              </p>
             </div>
-          </div>
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-ff-orange rounded-full flex items-center justify-center text-background font-bold">
+          </GamingCard>
+
+          <GamingCard glowColor="cyan" className="flex items-start space-x-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-ff-cyan/20 rounded-full flex items-center justify-center border-2 border-ff-cyan/40 font-bold text-ff-cyan text-xl">
               4
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Get Room Details</h4>
-              <p className="text-muted-foreground">Receive room ID and password via WhatsApp from admin</p>
+              <h3 className="text-xl font-bold mb-2 text-ff-cyan font-gaming">Battle & Win</h3>
+              <p className="text-muted-foreground">
+                Compete in scheduled matches and claim your victory rewards
+              </p>
             </div>
-          </div>
+          </GamingCard>
         </div>
-      </GamingCard>
+      </section>
+
+      {/* CTA Section */}
+      <section className="text-center py-12">
+        <GamingCard glowColor="orange" className="max-w-2xl mx-auto bg-gradient-to-br from-ff-orange/10 to-ff-cyan/10 border-2">
+          <h2 className="text-3xl font-bold mb-4 text-ff-orange text-shadow-ff font-gaming">
+            READY FOR BATTLE?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-6">
+            Join thousands of players in the ultimate Free Fire tournament experience
+          </p>
+          {isAuthenticated ? (
+            <GamingButton
+              onClick={() => navigate({ to: '/tournament' })}
+              variant="primary"
+              size="lg"
+              className="shadow-ff-glow"
+            >
+              <Trophy className="mr-2" size={20} />
+              Enter Tournament Now
+            </GamingButton>
+          ) : (
+            <GamingButton
+              onClick={() => navigate({ to: '/login' })}
+              variant="primary"
+              size="lg"
+              className="shadow-ff-glow animate-pulse-glow"
+            >
+              <Zap className="mr-2" size={20} />
+              Start Your Journey
+            </GamingButton>
+          )}
+        </GamingCard>
+      </section>
     </div>
   );
 }

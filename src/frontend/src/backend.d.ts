@@ -7,21 +7,7 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface AdminDepositRequest {
-    status: Variant_pending_approved_rejected;
-    userId: UserId;
-    userPrincipal: Principal;
-    timestamp: Time;
-    amount: bigint;
-}
-export type UserId = bigint;
 export type Time = bigint;
-export interface AdminUpdateTournamentRequest {
-    matchTime?: Time;
-    status?: boolean;
-    matchCount?: bigint;
-    entryFee?: bigint;
-}
 export interface TournamentJoinRequest {
     freeFireUid: string;
     joinTimestamp: Time;
@@ -34,16 +20,35 @@ export interface AdminTournamentMatchUpdate {
     matchId: bigint;
     matchInfo: MatchInfo;
 }
+export interface MatchInfo {
+    playerUID: string;
+    matchTime: Time;
+    whatsappNumber: string;
+}
+export interface AdminDepositRequest {
+    status: Variant_pending_approved_rejected;
+    userId: UserId;
+    userPrincipal: Principal;
+    timestamp: Time;
+    amount: bigint;
+}
+export type UserId = bigint;
+export interface DirectDeposit {
+    userId: UserId;
+    timestamp: Time;
+    amount: bigint;
+}
+export interface AdminUpdateTournamentRequest {
+    matchTime?: Time;
+    status?: boolean;
+    matchCount?: bigint;
+    entryFee?: bigint;
+}
 export interface TournamentInfo {
     matchTime: Time;
     status: boolean;
     matchCount: bigint;
     entryFee: bigint;
-}
-export interface MatchInfo {
-    playerUID: string;
-    matchTime: Time;
-    whatsappNumber: string;
 }
 export interface UserProfile {
     userId: UserId;
@@ -61,6 +66,8 @@ export enum Variant_pending_approved_rejected {
     rejected = "rejected"
 }
 export interface backendInterface {
+    adminDirectDeposit(userId: UserId, amount: bigint): Promise<void>;
+    adminDirectDepositByPrincipal(userPrincipal: Principal, amount: bigint): Promise<void>;
     approveDeposit(requestId: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deposit(amount: bigint): Promise<bigint>;
@@ -70,6 +77,7 @@ export interface backendInterface {
     getBalanceByUserId(userId: UserId): Promise<bigint>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getDirectDepositHistory(): Promise<Array<DirectDeposit>>;
     getEntryFee(): Promise<bigint>;
     getPendingDepositRequests(): Promise<Array<AdminDepositRequest>>;
     getPendingTournaments(): Promise<Array<MatchInfo>>;

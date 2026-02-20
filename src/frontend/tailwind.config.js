@@ -67,7 +67,10 @@ export default {
                     ring: 'oklch(var(--sidebar-ring))'
                 },
                 'ff-orange': 'oklch(var(--ff-orange))',
-                'ff-cyan': 'oklch(var(--ff-cyan))'
+                'ff-cyan': 'oklch(var(--ff-cyan))',
+                'ff-gold': 'oklch(var(--ff-gold))',
+                'ff-red': 'oklch(var(--ff-red))',
+                'ff-green': 'oklch(var(--ff-green))'
             },
             borderRadius: {
                 lg: 'var(--radius)',
@@ -75,7 +78,14 @@ export default {
                 sm: 'calc(var(--radius) - 4px)'
             },
             boxShadow: {
-                xs: '0 1px 2px 0 rgba(0,0,0,0.05)'
+                xs: '0 1px 2px 0 rgba(0,0,0,0.05)',
+                'ff-orange': '0 0 20px rgba(255, 100, 30, 0.4), 0 0 40px rgba(255, 100, 30, 0.2)',
+                'ff-cyan': '0 0 20px rgba(0, 200, 255, 0.4), 0 0 40px rgba(0, 200, 255, 0.2)',
+                'ff-glow': '0 0 30px rgba(255, 100, 30, 0.6), 0 0 60px rgba(255, 100, 30, 0.3)'
+            },
+            fontFamily: {
+                'gaming': ['Rajdhani', 'Orbitron', 'sans-serif'],
+                'display': ['Orbitron', 'Rajdhani', 'sans-serif']
             },
             keyframes: {
                 'accordion-down': {
@@ -85,11 +95,25 @@ export default {
                 'accordion-up': {
                     from: { height: 'var(--radix-accordion-content-height)' },
                     to: { height: '0' }
+                },
+                'pulse-glow': {
+                    '0%, 100%': { 
+                        boxShadow: '0 0 20px rgba(255, 100, 30, 0.4), 0 0 40px rgba(255, 100, 30, 0.2)' 
+                    },
+                    '50%': { 
+                        boxShadow: '0 0 30px rgba(255, 100, 30, 0.6), 0 0 60px rgba(255, 100, 30, 0.4)' 
+                    }
+                },
+                'battle-pulse': {
+                    '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                    '50%': { opacity: '0.8', transform: 'scale(1.05)' }
                 }
             },
             animation: {
                 'accordion-down': 'accordion-down 0.2s ease-out',
-                'accordion-up': 'accordion-up 0.2s ease-out'
+                'accordion-up': 'accordion-up 0.2s ease-out',
+                'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                'battle-pulse': 'battle-pulse 2s ease-in-out infinite'
             }
         }
     },

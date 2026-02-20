@@ -1,17 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "FF PAYALUGA is a private Free Fire esports tournament web application where users register with auto-generated IDs, deposit funds (₹10-₹100) via Google Pay QR, join 1v1 Clash Squad tournaments using wallet coins, and submit their FF UID + WhatsApp number. Features a comprehensive admin panel for deposit verification, coin management, tournament control, and player detail viewing. Dark Free Fire gaming theme with mobile-responsive design.",
+  "projectStateVersion": 15,
+  "summary": "FF PAYALUGA is a private Free Fire esports tournament web application where users register with auto-generated IDs, deposit funds (₹10-₹100) via UPI ID (NIRANJAN0508@FAM), join 1v1 Clash Squad tournaments using wallet coins, and submit their FF UID + WhatsApp number. Features a comprehensive admin panel for deposit verification, coin management, tournament control, and player detail viewing. Dark Free Fire gaming theme with mobile-responsive design.",
   "architectural_notes": [
     "Private access web application with manual link sharing",
     "Manual admin verification workflow for deposits and coin additions",
     "Manual room creation and WhatsApp-based room detail distribution by admin",
     "Auto-generated unique user IDs upon registration",
-    "Real-time tournament join requests sent to admin dashboard"
+    "Real-time tournament join requests sent to admin dashboard",
+    "UPI ID-based payment flow (NIRANJAN0508@FAM) instead of QR code scanning",
+    "Admin panel secured with password authentication (admin123)",
+    "Real-time notification system for deposit requests in admin dashboard",
+    "Two separate password-protected admin websites: one for tournament match management, one for coin deposits"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Free Fire themed hero banner with dark gaming aesthetic and esports elements (ff-hero-banner.dim_1200x400.png)\n- Google Pay QR code placeholder for deposit payments (gpay-qr-code.dim_300x300.png)\n- Free Fire logo for branding throughout the application (ff-logo.dim_200x200.png)\n- Dark gaming background texture for page backgrounds (gaming-bg-texture.dim_1920x1080.png)\n- Tournament icon with Free Fire Clash Squad theme (tournament-icon.dim_128x128.png)\n- Wallet/coin icon matching Free Fire visual style (wallet-icon.dim_128x128.png)",
+  "known_issues": [
+    "'ACTOR NOT AVAILABLE' error occurring during deposit submission - requires backend actor initialization fix"
+  ],
+  "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Free Fire battle background with combat zone environment and battlefield elements (ff-battle-bg.dim_1920x1080.png)\n- Free Fire themed header background with game UI elements (ff-header-bg.dim_1200x400.png)",
   "existing_features": [
     {
       "id": "feature-implement-user-authentication-system-with-email-and-password-registration-upon-successful-registration-automatically-generate-and-assign-a-unique-user-id-to-each-user-store-user-credentials-email-and-generated-id-in-the-backend",
@@ -60,6 +66,110 @@
         "REQ-7"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-replace-the-existing-google-pay-qr-code-displayed-on-the-wallet-deposit-page-with-the-user-provided-payment-qr-code-image-screenshot-20260219-235411-jpg-display-this-qr-code-when-a-user-successfully-submits-a-deposit-request-between-10-100",
+      "title": "Replace the existing Google Pay QR code displayed on the Wallet/Deposit page with the user-provided payment QR code image (Screenshot_20260219_235411.jpg). Display this QR code when a user successfully submits a deposit request between ₹10-₹100.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-website-url-link-or-shareable-website-address-to-the-application-interface-the-link-should-allow-users-to-easily-copy-or-share-the-ff-payaluga-platform-url",
+      "title": "Add a visible website URL link or shareable website address to the application interface. The link should allow users to easily copy or share the FF PAYALUGA platform URL.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-google-pay-qr-code-image-display-from-the-wallet-deposit-page-walletdeposit-tsx-after-a-user-submits-a-deposit-request",
+      "title": "Remove the Google Pay QR code image display from the Wallet/Deposit page (WalletDeposit.tsx) after a user submits a deposit request",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-upi-id-niranjan0508-fam-on-the-wallet-deposit-page-after-a-user-successfully-submits-a-deposit-request-between-10-100-show-clear-instructions-for-users-to-complete-payment-using-this-upi-id",
+      "title": "Display the UPI ID 'NIRANJAN0508@FAM' on the Wallet/Deposit page after a user successfully submits a deposit request between ₹10-₹100. Show clear instructions for users to complete payment using this UPI ID.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-actor-not-available-error-occurring-when-users-submit-deposit-requests-on-the-wallet-deposit-page-ensure-the-backend-actor-is-properly-initialized-and-accessible-during-deposit-submission",
+      "title": "Investigate and fix the 'ACTOR NOT AVAILABLE' error occurring when users submit deposit requests on the Wallet/Deposit page. Ensure the backend actor is properly initialized and accessible during deposit submission.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-password-based-authentication-for-the-admin-panel-only-users-who-enter-the-correct-password-admin123-can-access-admin-controls-add-a-password-input-screen-before-showing-the-admin-dashboard",
+      "title": "Implement password-based authentication for the admin panel. Only users who enter the correct password 'admin123' can access admin controls. Add a password input screen before showing the admin dashboard.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-tournament-join-request-details-user-uid-and-whatsapp-number-in-the-admin-panel-when-users-join-tournaments-ensure-this-information-is-clearly-visible-and-accessible-for-the-admin",
+      "title": "Display tournament join request details (user UID and WhatsApp number) in the admin panel when users join tournaments. Ensure this information is clearly visible and accessible for the admin.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-real-time-notification-system-in-the-admin-panel-that-alerts-the-admin-whenever-a-user-submits-a-deposit-request-display-notification-badges-or-alerts-showing-the-count-of-pending-deposit-requests",
+      "title": "Add a real-time notification system in the admin panel that alerts the admin whenever a user submits a deposit request. Display notification badges or alerts showing the count of pending deposit requests.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-tournament-match-management-interface-to-the-admin-panel-where-admin-can-directly-conduct-tournament-matches-include-functionality-to-view-current-matches-update-match-status-record-results-and-manage-match-schedules",
+      "title": "Add tournament match management interface to the admin panel where admin can directly conduct tournament matches. Include functionality to view current matches, update match status, record results, and manage match schedules.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-direct-coin-deposit-functionality-in-the-admin-panel-where-admin-can-manually-add-coins-to-any-user-s-wallet-without-requiring-a-deposit-request-include-user-selection-interface-and-coin-amount-input-with-validation",
+      "title": "Add direct coin deposit functionality in the admin panel where admin can manually add coins to any user's wallet without requiring a deposit request. Include user selection interface and coin amount input with validation.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-current-background-styling-across-all-pages-with-authentic-free-fire-battle-themed-backgrounds-featuring-battlefield-environments-combat-zones-and-in-game-visual-elements-characteristic-of-real-free-fire-gameplay",
+      "title": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments, combat zones, and in-game visual elements characteristic of real Free Fire gameplay.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-application-s-color-scheme-and-theme-styling-to-match-authentic-free-fire-battle-aesthetics-including-free-fire-s-signature-color-palette-ui-patterns-from-the-actual-game-and-combat-inspired-visual-elements-throughout-all-components-and-pages",
+      "title": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics, including Free Fire's signature color palette, UI patterns from the actual game, and combat-inspired visual elements throughout all components and pages.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-owner-name-niranjan-prominently-in-the-application-interface-ensuring-it-is-clearly-visible-and-appropriately-styled-to-match-the-free-fire-battle-theme",
+      "title": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -105,6 +215,126 @@
       "reqIds": [
         "REQ-4"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Replace QR code payment with UPI ID display (NIRANJAN0508@FAM) for deposit transactions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Fix 'ACTOR NOT AVAILABLE' error occurring during deposit submission",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement admin panel password protection with secret password 'admin123' - only authorized users can access admin controls",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Add real-time notification system in admin panel to alert when users make deposit requests",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Create backend functions to support admin tournament match management including storing match data, updating match status, and recording match results with participant information.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Create backend function for admin direct coin deposits that adds coins to user wallets without requiring user-initiated deposit requests. Include admin authorization checks and transaction logging.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Create separate standalone website for tournament match management with password protection (admin123)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Create separate standalone website for direct coin deposits to user wallets with password protection (admin123)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Create a new standalone website application specifically for tournament match management. This website must be completely separate from the main FF PAYALUGA application and should only be accessible via a distinct URL/deployment.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Implement password protection for the tournament match management website using the password 'admin123'. Users must enter this password before accessing any tournament match management features.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Include all tournament match management functionality in the new standalone website: view current matches, create new matches, update match status, record match results, manage match schedules, and search/filter matches.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Create a second standalone website application specifically for direct coin deposits to user wallets. This website must be completely separate from both the main FF PAYALUGA application and the tournament match management website, accessible via its own distinct URL/deployment.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Implement password protection for the direct coin deposit website using the password 'admin123'. Users must enter this password before accessing coin deposit functionality.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Include all direct coin deposit functionality in the new standalone website: user selection interface, coin amount input with validation, ability to manually add coins to any user's wallet, and transaction history viewing with search capabilities.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Apply the Free Fire gaming themed dark UI with gaming-style elements to both new standalone admin websites, ensuring visual consistency with the main application while maintaining their independent nature.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Update UI theme to match real Free Fire battle aesthetics with authentic game visuals and styling",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Display owner/creator name 'NIRANJAN' prominently in the application interface",
+      "reqIds": [],
       "status": "pending"
     }
   ],

@@ -19,13 +19,13 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const UserId = IDL.Nat;
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
 export const Time = IDL.Int;
-export const UserId = IDL.Nat;
 export const TournamentJoinRequest = IDL.Record({
   'freeFireUid' : IDL.Text,
   'joinTimestamp' : Time,
@@ -38,6 +38,11 @@ export const UserProfile = IDL.Record({
   'userId' : UserId,
   'name' : IDL.Text,
   'email' : IDL.Text,
+});
+export const DirectDeposit = IDL.Record({
+  'userId' : UserId,
+  'timestamp' : Time,
+  'amount' : IDL.Nat,
 });
 export const AdminDepositRequest = IDL.Record({
   'status' : IDL.Variant({
@@ -100,6 +105,8 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'adminDirectDeposit' : IDL.Func([UserId, IDL.Nat], [], []),
+  'adminDirectDepositByPrincipal' : IDL.Func([IDL.Principal, IDL.Nat], [], []),
   'approveDeposit' : IDL.Func([IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'deposit' : IDL.Func([IDL.Nat], [IDL.Nat], []),
@@ -113,6 +120,7 @@ export const idlService = IDL.Service({
   'getBalanceByUserId' : IDL.Func([UserId], [IDL.Nat], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getDirectDepositHistory' : IDL.Func([], [IDL.Vec(DirectDeposit)], ['query']),
   'getEntryFee' : IDL.Func([], [IDL.Nat], ['query']),
   'getPendingDepositRequests' : IDL.Func(
       [],
@@ -167,13 +175,13 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
+  const UserId = IDL.Nat;
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
   const Time = IDL.Int;
-  const UserId = IDL.Nat;
   const TournamentJoinRequest = IDL.Record({
     'freeFireUid' : IDL.Text,
     'joinTimestamp' : Time,
@@ -186,6 +194,11 @@ export const idlFactory = ({ IDL }) => {
     'userId' : UserId,
     'name' : IDL.Text,
     'email' : IDL.Text,
+  });
+  const DirectDeposit = IDL.Record({
+    'userId' : UserId,
+    'timestamp' : Time,
+    'amount' : IDL.Nat,
   });
   const AdminDepositRequest = IDL.Record({
     'status' : IDL.Variant({
@@ -248,6 +261,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'adminDirectDeposit' : IDL.Func([UserId, IDL.Nat], [], []),
+    'adminDirectDepositByPrincipal' : IDL.Func(
+        [IDL.Principal, IDL.Nat],
+        [],
+        [],
+      ),
     'approveDeposit' : IDL.Func([IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'deposit' : IDL.Func([IDL.Nat], [IDL.Nat], []),
@@ -261,6 +280,11 @@ export const idlFactory = ({ IDL }) => {
     'getBalanceByUserId' : IDL.Func([UserId], [IDL.Nat], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getDirectDepositHistory' : IDL.Func(
+        [],
+        [IDL.Vec(DirectDeposit)],
+        ['query'],
+      ),
     'getEntryFee' : IDL.Func([], [IDL.Nat], ['query']),
     'getPendingDepositRequests' : IDL.Func(
         [],

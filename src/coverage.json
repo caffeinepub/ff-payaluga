@@ -1,250 +1,77 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T18:17:04.015Z",
+  "generatedAt": "2026-02-20T03:29:32.567Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 7,
-    "implemented": 6,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Implement user authentication system with email and password registration. Upon successful registration, automatically generate and assign a unique User ID to each user. Store user credentials, email, and generated ID in the backend.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/LoginRegister.tsx",
-          "frontend/src/components/RegistrationForm.tsx",
-          "frontend/src/components/LoginForm.tsx",
-          "frontend/src/hooks/useAuth.ts",
-          "frontend/src/components/ProfileSetupModal.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/LoginRegister.tsx",
-          "frontend/src/components/ProfileSetupModal.tsx"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Create a wallet system for each user with coin balance tracking. Implement deposit functionality where users can enter amounts between ₹10 and ₹100. Display a Google Pay QR code when user submits a deposit request. Store pending deposit requests with amount and timestamp.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx",
-          "frontend/src/components/DepositForm.tsx",
-          "frontend/src/components/QRCodeDisplay.tsx",
-          "frontend/src/components/WalletBalance.tsx",
-          "frontend/src/hooks/useWallet.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Build admin deposit verification system. Admin can view all pending deposit requests with user details and submitted amounts. Admin can approve deposits and manually add equivalent coins to user wallets using 1₹ = 1 Coin conversion rate.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/admin/DepositVerification.tsx",
-          "frontend/src/components/admin/DepositRequestCard.tsx",
-          "frontend/src/hooks/useAdminDeposits.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/admin/DepositVerification.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Implement tournament join system for Free Fire Clash Squad 1v1 mode. Users must provide their Free Fire UID and WhatsApp phone number when joining. Automatically deduct the tournament entry fee from user's wallet balance. Send user UID, phone number, and join timestamp to admin dashboard instantly.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/TournamentJoinForm.tsx",
-          "frontend/src/hooks/useTournament.ts",
-          "frontend/src/components/TournamentStatusBanner.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Create comprehensive admin control panel with user management, tournament configuration, and match scheduling. Admin can view all registered users with their IDs, manage tournament status (Open/Closed), set tournament entry fee, set match time, and customize match schedule. Admin can view all tournament join requests with player UID and WhatsApp numbers.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminPanel.tsx",
-          "frontend/src/components/admin/UserManagement.tsx",
-          "frontend/src/components/admin/TournamentConfig.tsx",
-          "frontend/src/components/admin/JoinRequestsList.tsx",
-          "frontend/src/components/admin/AccessDeniedScreen.tsx",
-          "frontend/src/hooks/useAdminTournament.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminPanel.tsx",
-          "frontend/src/components/admin/UserManagement.tsx",
-          "frontend/src/components/admin/TournamentConfig.tsx",
-          "frontend/src/components/admin/JoinRequestsList.tsx",
-          "frontend/src/components/admin/AccessDeniedScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Design and implement Free Fire gaming themed UI with dark background throughout the application. Use gaming-style elements including animated buttons, esports-inspired layouts, and Free Fire visual motifs. Ensure all pages are fully mobile responsive with touch-friendly controls and adaptive layouts.",
+        "id": "REQ-27",
+        "summary": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments, combat zones, and in-game visual elements characteristic of real Free Fire gameplay.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/index.css",
-          "frontend/tailwind.config.js",
           "frontend/src/components/layout/Layout.tsx",
-          "frontend/src/components/common/GamingButton.tsx",
-          "frontend/src/components/common/GamingCard.tsx"
+          "frontend/src/pages/Home.tsx"
         ],
         "matchedFiles": [
           "frontend/src/index.css",
-          "frontend/tailwind.config.js",
           "frontend/src/components/layout/Layout.tsx",
-          "frontend/src/components/common/GamingButton.tsx",
-          "frontend/src/components/common/GamingCard.tsx"
+          "frontend/src/pages/Home.tsx"
         ]
       },
       {
-        "id": "REQ-7",
-        "summary": "Create six-page application structure: Home page (landing/welcome), Login/Register page (authentication forms), Dashboard (user overview with wallet balance and tournament status), Wallet/Deposit page (deposit form and transaction history), Tournament Page (join form and active tournaments), and Admin Panel (user management, deposit verification, tournament control).",
+        "id": "REQ-28",
+        "summary": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics, including Free Fire's signature color palette, UI patterns from the actual game, and combat-inspired visual elements throughout all components and pages.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Home.tsx",
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/pages/TournamentPage.tsx",
-          "frontend/src/App.tsx",
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css",
+          "frontend/src/components/common/GamingButton.tsx",
+          "frontend/src/components/common/GamingCard.tsx",
           "frontend/src/components/layout/Navigation.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Home.tsx",
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/pages/TournamentPage.tsx",
-          "frontend/src/App.tsx",
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css",
+          "frontend/src/components/common/GamingButton.tsx",
+          "frontend/src/components/common/GamingCard.tsx",
           "frontend/src/components/layout/Navigation.tsx"
+        ]
+      },
+      {
+        "id": "REQ-29",
+        "summary": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/Navigation.tsx",
+          "frontend/src/components/layout/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/Navigation.tsx",
+          "frontend/src/components/layout/Layout.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
-    "backend/blob-storage/Mixin.mo",
-    "backend/blob-storage/Storage.mo",
-    "backend/main.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
-    "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/public/assets/generated/ff-hero-banner.dim_1200x400.png",
-    "frontend/public/assets/generated/ff-logo.dim_200x200.png",
-    "frontend/public/assets/generated/gaming-bg-texture.dim_1920x1080.png",
-    "frontend/public/assets/generated/gpay-qr-code.dim_300x300.png",
-    "frontend/public/assets/generated/tournament-icon.dim_128x128.png",
-    "frontend/public/assets/generated/wallet-icon.dim_128x128.png",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/ProfileSetupModal.tsx",
-    "frontend/src/components/admin/AccessDeniedScreen.tsx",
-    "frontend/src/components/admin/DepositVerification.tsx",
-    "frontend/src/components/admin/JoinRequestsList.tsx",
-    "frontend/src/components/admin/TournamentConfig.tsx",
-    "frontend/src/components/admin/UserManagement.tsx",
+    "frontend/public/assets/generated/ff-battle-bg.dim_1920x1080.png",
+    "frontend/public/assets/generated/ff-header-bg.dim_1200x400.png",
     "frontend/src/components/common/GamingButton.tsx",
     "frontend/src/components/common/GamingCard.tsx",
     "frontend/src/components/layout/Layout.tsx",
     "frontend/src/components/layout/Navigation.tsx",
-    "frontend/src/config.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
-    "frontend/src/hooks/useQueries.ts",
     "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/AdminPanel.tsx",
-    "frontend/src/pages/Dashboard.tsx",
     "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/LoginRegister.tsx",
-    "frontend/src/pages/TournamentPage.tsx",
-    "frontend/src/pages/WalletDeposit.tsx",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/src/utils/urlParams.ts",
     "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",

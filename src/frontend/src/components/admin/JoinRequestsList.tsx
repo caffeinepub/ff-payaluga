@@ -38,9 +38,9 @@ export default function JoinRequestsList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User ID</TableHead>
+              <TableHead>User UID</TableHead>
               <TableHead>Free Fire UID</TableHead>
-              <TableHead>WhatsApp</TableHead>
+              <TableHead>WhatsApp Number</TableHead>
               <TableHead>Entry Fee</TableHead>
               <TableHead>Join Time</TableHead>
             </TableRow>
@@ -51,7 +51,7 @@ export default function JoinRequestsList() {
                 <TableRow key={index}>
                   <TableCell className="font-medium text-ff-orange">{request.userId.toString()}</TableCell>
                   <TableCell className="font-mono">{request.freeFireUid}</TableCell>
-                  <TableCell>{request.whatsappNumber}</TableCell>
+                  <TableCell className="font-medium">{request.whatsappNumber}</TableCell>
                   <TableCell>{request.entryFeePaid.toString()} Coins</TableCell>
                   <TableCell>{new Date(Number(request.joinTimestamp) / 1000000).toLocaleString()}</TableCell>
                 </TableRow>

@@ -1,23 +1,48 @@
+import { StrictMode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
-import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from './hooks/useQueries';
+import { InternetIdentityProvider } from './hooks/useInternetIdentity';
+import { ThemeProvider } from 'next-themes';
+import { Toaster } from './components/ui/sonner';
 import Layout from './components/layout/Layout';
+import ProfileSetupModal from './components/ProfileSetupModal';
 import Home from './pages/Home';
 import LoginRegister from './pages/LoginRegister';
 import Dashboard from './pages/Dashboard';
 import WalletDeposit from './pages/WalletDeposit';
 import TournamentPage from './pages/TournamentPage';
 import AdminPanel from './pages/AdminPanel';
-import ProfileSetupModal from './components/ProfileSetupModal';
-import { Toaster } from './components/ui/sonner';
-import { ThemeProvider } from 'next-themes';
+import TournamentAdminPage from './pages/TournamentAdminPage';
+import DepositAdminPage from './pages/DepositAdminPage';
+import { useInternetIdentity } from './hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from './hooks/useQueries';
 
-function RootComponent() {
-  const { identity } = useInternetIdentity();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function LayoutWrapper() {
+  const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  
   const isAuthenticated = !!identity;
-
   const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ff-orange mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Initializing...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -25,13 +50,12 @@ function RootComponent() {
         <Outlet />
       </Layout>
       {showProfileSetup && <ProfileSetupModal />}
-      <Toaster />
     </>
   );
 }
 
 const rootRoute = createRootRoute({
-  component: RootComponent,
+  component: LayoutWrapper,
 });
 
 const indexRoute = createRoute({
@@ -70,6 +94,18 @@ const adminRoute = createRoute({
   component: AdminPanel,
 });
 
+const tournamentAdminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/tournament-admin',
+  component: TournamentAdminPage,
+});
+
+const depositAdminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/deposit-admin',
+  component: DepositAdminPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
@@ -77,14 +113,29 @@ const routeTree = rootRoute.addChildren([
   walletRoute,
   tournamentRoute,
   adminRoute,
+  tournamentAdminRoute,
+  depositAdminRoute,
 ]);
 
 const router = createRouter({ routeTree });
 
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 export default function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <StrictMode>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <QueryClientProvider client={queryClient}>
+          <InternetIdentityProvider>
+            <RouterProvider router={router} />
+            <Toaster />
+          </InternetIdentityProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </StrictMode>
   );
 }

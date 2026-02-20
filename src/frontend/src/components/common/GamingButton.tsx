@@ -8,18 +8,18 @@ interface GamingButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const GamingButton = forwardRef<HTMLButtonElement, GamingButtonProps>(
   ({ className, variant = 'primary', size = 'md', children, disabled, ...props }, ref) => {
-    const baseStyles = 'font-semibold rounded-lg transition-all duration-200 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none';
+    const baseStyles = 'font-bold rounded-lg transition-all duration-200 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-gaming tracking-wide uppercase';
     
     const variantStyles = {
-      primary: 'bg-gradient-to-r from-ff-orange to-ff-orange/80 hover:from-ff-orange/90 hover:to-ff-orange/70 text-white shadow-lg shadow-ff-orange/50 hover:shadow-ff-orange/70',
-      secondary: 'bg-gradient-to-r from-ff-cyan to-ff-cyan/80 hover:from-ff-cyan/90 hover:to-ff-cyan/70 text-background shadow-lg shadow-ff-cyan/50 hover:shadow-ff-cyan/70',
-      danger: 'bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70 text-white shadow-lg shadow-destructive/50',
+      primary: 'bg-gradient-to-r from-ff-orange via-ff-orange to-ff-red hover:from-ff-orange/90 hover:via-ff-orange hover:to-ff-red/90 text-white shadow-ff-orange hover:shadow-ff-glow border-2 border-ff-orange/50',
+      secondary: 'bg-gradient-to-r from-ff-cyan via-ff-cyan to-secondary hover:from-ff-cyan/90 hover:via-ff-cyan hover:to-secondary/90 text-background shadow-ff-cyan hover:shadow-lg border-2 border-ff-cyan/50',
+      danger: 'bg-gradient-to-r from-ff-red via-destructive to-ff-red/80 hover:from-ff-red/90 hover:via-destructive/90 hover:to-ff-red/70 text-white shadow-lg shadow-destructive/50 border-2 border-ff-red/50',
     };
 
     const sizeStyles = {
-      sm: 'px-4 py-2 text-sm min-h-[36px]',
-      md: 'px-6 py-3 text-base min-h-[44px]',
-      lg: 'px-8 py-4 text-lg min-h-[52px]',
+      sm: 'px-4 py-2 text-xs min-h-[36px]',
+      md: 'px-6 py-3 text-sm min-h-[44px]',
+      lg: 'px-8 py-4 text-base min-h-[52px]',
     };
 
     return (

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, AdminDepositRequest, TournamentJoinRequest, TournamentInfo } from '../backend';
+import type { UserProfile, AdminDepositRequest, TournamentJoinRequest, TournamentInfo, MatchInfo, DirectDeposit } from '../backend';
 import { toast } from 'sonner';
 
 export function useGetCallerUserProfile() {
@@ -66,6 +66,7 @@ export function useDeposit() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingDepositRequests'] });
       toast.success('Deposit request submitted! Please complete payment and wait for admin approval.');
     },
     onError: (error: Error) => {
@@ -98,6 +99,7 @@ export function useJoinTournament() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+      queryClient.invalidateQueries({ queryKey: ['allTournamentJoinRequests'] });
       toast.success('Successfully joined tournament! Admin will contact you via WhatsApp.');
     },
     onError: (error: Error) => {
@@ -133,6 +135,7 @@ export function useGetPendingDepositRequests() {
       return actor.getPendingDepositRequests();
     },
     enabled: !!actor && !actorFetching,
+    refetchInterval: 30000,
   });
 }
 
@@ -197,6 +200,7 @@ export function useGetAllTournamentJoinRequests() {
       return actor.getAllTournamentJoinRequests();
     },
     enabled: !!actor && !actorFetching,
+    refetchInterval: 30000,
   });
 }
 
@@ -273,5 +277,108 @@ export function useSetMatchCount() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to update match count');
     },
+  });
+}
+
+export function useGetPendingMatches() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<MatchInfo[]>({
+    queryKey: ['pendingMatches'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getPendingTournaments();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useSetMatch() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ matchId, matchInfo }: { matchId: bigint; matchInfo: MatchInfo }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.setMatch(matchId, matchInfo);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
+      toast.success('Match created successfully!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to create match');
+    },
+  });
+}
+
+export function useUpdateMatch() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ matchId, matchInfo }: { matchId: bigint; matchInfo: MatchInfo }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.updateMatch(matchId, matchInfo);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
+      toast.success('Match updated successfully!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update match');
+    },
+  });
+}
+
+export function useUpdateMatchTime() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ matchId, newTime }: { matchId: bigint; newTime: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.updateMatchTime(matchId, newTime);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
+      toast.success('Match time updated!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update match time');
+    },
+  });
+}
+
+export function useAdminDirectDeposit() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId, coinsAdded }: { userId: bigint; coinsAdded: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.adminDirectDeposit(userId, coinsAdded);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allDirectDeposits'] });
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+      toast.success('Coins added successfully!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to add coins');
+    },
+  });
+}
+
+export function useGetAllDirectDeposits() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<DirectDeposit[]>({
+    queryKey: ['allDirectDeposits'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getDirectDepositHistory();
+    },
+    enabled: !!actor && !actorFetching,
   });
 }

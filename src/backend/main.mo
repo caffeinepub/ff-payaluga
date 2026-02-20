@@ -1,27 +1,24 @@
-import Array "mo:core/Array";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
-import Int "mo:core/Int";
-import Time "mo:core/Time";
-import Text "mo:core/Text";
-import Order "mo:core/Order";
-import Option "mo:core/Option";
-import Principal "mo:core/Principal";
-import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
+import Array "mo:core/Array";
+import Time "mo:core/Time";
+import Order "mo:core/Order";
+import Runtime "mo:core/Runtime";
+import Principal "mo:core/Principal";
+import Int "mo:core/Int";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 
+
+
 actor {
   include MixinStorage();
-
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // Type definitions
   public type UserId = Nat;
-
   public type UserProfile = {
     userId : UserId;
     email : Text;
@@ -31,6 +28,12 @@ actor {
   public type CoinBalance = {
     userId : UserId;
     balance : Nat;
+  };
+
+  public type DirectDeposit = {
+    userId : UserId;
+    amount : Nat;
+    timestamp : Time.Time;
   };
 
   public type AdminDepositRequest = {
@@ -75,8 +78,6 @@ actor {
     matchTime : ?Time.Time;
   };
 
-  var nextUserId = 1 : UserId;
-
   module CoinBalance {
     public func compare(balance1 : CoinBalance, balance2 : CoinBalance) : Order.Order {
       Nat.compare(balance1.balance, balance2.balance);
@@ -91,18 +92,19 @@ actor {
 
   module MatchInfo {
     public func compare(match1 : MatchInfo, match2 : MatchInfo) : Order.Order {
-      Text.compare(match1.playerUID, match2.playerUID);
+      match1.playerUID.compare(match2.playerUID);
     };
   };
 
-  // Stable data structures
   let userProfiles = Map.empty<Principal, UserProfile>();
   let principalToUserId = Map.empty<Principal, UserId>();
   let coinBalances = Map.empty<UserId, Nat>();
   let depositRequests = Map.empty<Nat, AdminDepositRequest>();
-  var nextDepositRequestId = 1 : Nat;
+  var nextDepositRequestId = 1;
+  var nextUserId = 1;
+
   let tournamentJoinRequests = Map.empty<Nat, TournamentJoinRequest>();
-  var nextTournamentJoinId = 1 : Nat;
+  var nextTournamentJoinId = 1;
   let matches = Map.empty<Nat, MatchInfo>();
   var tournamentInfo : TournamentInfo = {
     entryFee = 50;
@@ -111,7 +113,9 @@ actor {
     matchTime = 0;
   };
 
-  // User Profile Management (Required by frontend)
+  let directDepositHistory = Map.empty<Nat, DirectDeposit>();
+  var nextDirectDepositId = 1;
+
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -131,7 +135,6 @@ actor {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
 
-    // Assign userId if this is a new user
     switch (principalToUserId.get(caller)) {
       case (null) {
         let userId = nextUserId;
@@ -141,7 +144,6 @@ actor {
           profile with userId = userId;
         };
         userProfiles.add(caller, updatedProfile);
-        // Initialize balance for new user
         coinBalances.add(userId, 0);
       };
       case (?existingUserId) {
@@ -153,7 +155,6 @@ actor {
     };
   };
 
-  // Queries - Public access
   public query func getEntryFee() : async Nat {
     tournamentInfo.entryFee;
   };
@@ -166,7 +167,6 @@ actor {
     tournamentInfo;
   };
 
-  // Admin-only queries
   public query ({ caller }) func getPendingTournaments() : async [MatchInfo] {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can view pending tournaments");
@@ -208,7 +208,6 @@ actor {
     userProfiles.values().toArray();
   };
 
-  // Balance functionality - User access
   public query ({ caller }) func getUserBalance() : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can check balance");
@@ -221,7 +220,6 @@ actor {
     coinBalances.get(userId).get(0);
   };
 
-  // Admin balance queries
   public query ({ caller }) func getBalanceByUserId(userId : UserId) : async Nat {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
@@ -250,13 +248,11 @@ actor {
     total;
   };
 
-  // Deposit functionality - User access
   public shared ({ caller }) func deposit(amount : Nat) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can make deposits");
     };
 
-    // Validate deposit amount (₹10 to ₹100)
     if (amount < 10 or amount > 100) {
       Runtime.trap("Invalid deposit amount: Must be between ₹10 and ₹100");
     };
@@ -277,7 +273,6 @@ actor {
     amount;
   };
 
-  // Admin deposit approval
   public shared ({ caller }) func approveDeposit(requestId : Nat) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can approve deposits");
@@ -288,13 +283,10 @@ actor {
       case (?request) {
         switch (request.status) {
           case (#pending) {
-            // Update request status
             let approvedRequest = {
               request with status = #approved;
             };
             depositRequests.add(requestId, approvedRequest);
-
-            // Add coins to user balance (1₹ = 1 Coin)
             let currentBalance = getUserBalanceInternal(request.userId);
             updateBalance(request.userId, currentBalance + request.amount);
           };
@@ -329,13 +321,69 @@ actor {
     };
   };
 
-  // Tournament join functionality - User access
+  public shared ({ caller }) func adminDirectDeposit(userId : UserId, amount : Nat) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can perform direct deposits");
+    };
+
+    if (amount == 0) {
+      Runtime.trap("Invalid deposit amount: Must be greater than 0");
+    };
+
+    let currentBalance = getUserBalanceInternal(userId);
+    updateBalance(userId, currentBalance + amount);
+
+    let depositRecord : DirectDeposit = {
+      userId;
+      amount;
+      timestamp = Time.now();
+    };
+
+    let depositId = nextDirectDepositId;
+    nextDirectDepositId += 1;
+    directDepositHistory.add(depositId, depositRecord);
+  };
+
+  public shared ({ caller }) func adminDirectDepositByPrincipal(userPrincipal : Principal, amount : Nat) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can perform direct deposits");
+    };
+
+    if (amount == 0) {
+      Runtime.trap("Invalid deposit amount: Must be greater than 0");
+    };
+
+    switch (principalToUserId.get(userPrincipal)) {
+      case (null) { Runtime.trap("User not found") };
+      case (?userId) {
+        let currentBalance = getUserBalanceInternal(userId);
+        updateBalance(userId, currentBalance + amount);
+
+        let depositRecord : DirectDeposit = {
+          userId;
+          amount;
+          timestamp = Time.now();
+        };
+
+        let depositId = nextDirectDepositId;
+        nextDirectDepositId += 1;
+        directDepositHistory.add(depositId, depositRecord);
+      };
+    };
+  };
+
+  public query ({ caller }) func getDirectDepositHistory() : async [DirectDeposit] {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can view direct deposit history");
+    };
+    directDepositHistory.values().toArray();
+  };
+
   public shared ({ caller }) func joinTournament(freeFireUid : Text, whatsappNumber : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can join tournaments");
     };
 
-    // Check if tournament is open
     if (not tournamentInfo.status) {
       Runtime.trap("Tournament entry is currently closed");
     };
@@ -343,15 +391,12 @@ actor {
     let userId = getUserIdOrTrap(caller);
     let currentBalance = getUserBalanceInternal(userId);
 
-    // Check if user has sufficient balance
     if (currentBalance < tournamentInfo.entryFee) {
       Runtime.trap("Insufficient balance: Please deposit coins to join tournament");
     };
 
-    // Deduct entry fee from user balance
     updateBalance(userId, currentBalance - tournamentInfo.entryFee);
 
-    // Create tournament join request
     let joinRequest : TournamentJoinRequest = {
       userId;
       userPrincipal = caller;
@@ -366,12 +411,10 @@ actor {
     tournamentJoinRequests.add(requestId, joinRequest);
   };
 
-  // Coin system functionality
   func updateBalance(userId : UserId, newBalance : Nat) {
     coinBalances.add(userId, newBalance);
   };
 
-  // Helper functions
   func getUserIdOrTrap(principalId : Principal) : UserId {
     switch (principalToUserId.get(principalId)) {
       case (null) { Runtime.trap("User not registered: Please create a profile first") };
@@ -379,7 +422,6 @@ actor {
     };
   };
 
-  // Admin-only setters
   public shared ({ caller }) func setEntryFee(entryFee : Nat) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
