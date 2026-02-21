@@ -10,17 +10,22 @@ import Int "mo:core/Int";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   include MixinStorage();
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+
+  let permanentAdminEmail = "niranjanniranjan88464@gmail.com";
 
   public type UserId = Nat;
   public type UserProfile = {
     userId : UserId;
     email : Text;
     name : Text;
+    principal : Principal;
   };
 
   public type CoinBalance = {
@@ -115,21 +120,111 @@ actor {
   var nextDirectDepositId = 1;
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not (isAuthorizedUserOrPermanentAdmin(caller))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
     };
     userProfiles.get(caller);
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can view other profiles");
     };
     userProfiles.get(user);
   };
 
+  public query ({ caller }) func getEntryFee() : async Nat {
+    tournamentInfo.entryFee;
+  };
+
+  public query ({ caller }) func isTournamentEntryOpen() : async Bool {
+    tournamentInfo.status;
+  };
+
+  public query ({ caller }) func getTournamentInfo() : async TournamentInfo {
+    tournamentInfo;
+  };
+
+  public query ({ caller }) func getPendingTournaments() : async [MatchInfo] {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can view pending tournaments");
+    };
+    matches.values().toArray().sort();
+  };
+
+  public query ({ caller }) func hasOpenTournaments() : async Bool {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can check tournament status");
+    };
+    matches.size() > 0;
+  };
+
+  public query ({ caller }) func getPendingDepositRequests() : async [AdminDepositRequest] {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can view deposit requests");
+    };
+
+    depositRequests.values().toArray().filter(func(req : AdminDepositRequest) : Bool {
+      switch (req.status) {
+        case (#pending) { true };
+        case (_) { false };
+      };
+    });
+  };
+
+  public query ({ caller }) func getAllUsers() : async [UserProfile] {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can view all users");
+    };
+    userProfiles.values().toArray();
+  };
+
+  public query ({ caller }) func getUserBalance() : async Nat {
+    if (not (isAuthorizedUserOrPermanentAdmin(caller))) {
+      Runtime.trap("Unauthorized: Only users can check balance");
+    };
+    let userId = getUserIdOrTrap(caller);
+    getUserBalanceInternal(userId);
+  };
+
+  func getUserBalanceInternal(userId : UserId) : Nat {
+    coinBalances.get(userId).get(0);
+  };
+
+  public query ({ caller }) func getBalanceByUserId(userId : UserId) : async Nat {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    getUserBalanceInternal(userId);
+  };
+
+  public query ({ caller }) func getBalanceByPrincipalId(principalId : Principal) : async Nat {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    switch (principalToUserId.get(principalId)) {
+      case (null) { 0 };
+      case (?userId) { getUserBalanceInternal(userId) };
+    };
+  };
+
+  public query ({ caller }) func getTotalBalance() : async Nat {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    var total = 0;
+    for (balance in coinBalances.values()) {
+      total += balance;
+    };
+    total;
+  };
+
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    // Check if this is the permanent admin email - allow profile creation without prior authorization
+    let isPermanentAdminEmail = profile.email == permanentAdminEmail;
+
+    // For non-permanent-admin users, require authorization
+    if (not isPermanentAdminEmail and not (isAuthorizedUserOrPermanentAdmin(caller))) {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
 
@@ -143,114 +238,28 @@ actor {
         };
         userProfiles.add(caller, updatedProfile);
         coinBalances.add(userId, 0);
+
+        // Automatically assign admin role if this is the permanent admin email
+        if (isPermanentAdminEmail) {
+          AccessControl.assignRole(accessControlState, caller, caller, #admin);
+        };
       };
       case (?existingUserId) {
         let updatedProfile = {
           profile with userId = existingUserId;
         };
         userProfiles.add(caller, updatedProfile);
+
+        // If updating to permanent admin email, ensure admin role is assigned
+        if (isPermanentAdminEmail and not AccessControl.isAdmin(accessControlState, caller)) {
+          AccessControl.assignRole(accessControlState, caller, caller, #admin);
+        };
       };
     };
-  };
-
-  // Public query - no authentication required (guests can view)
-  public query func getEntryFee() : async Nat {
-    tournamentInfo.entryFee;
-  };
-
-  // Public query - no authentication required (guests can view)
-  public query func isTournamentEntryOpen() : async Bool {
-    tournamentInfo.status;
-  };
-
-  // Public query - no authentication required (guests can view)
-  public query func getTournamentInfo() : async TournamentInfo {
-    tournamentInfo;
-  };
-
-  public query ({ caller }) func getPendingTournaments() : async [MatchInfo] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view pending tournaments");
-    };
-    matches.values().toArray().sort();
-  };
-
-  public query ({ caller }) func hasOpenTournaments() : async Bool {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can check tournament status");
-    };
-    matches.size() > 0;
-  };
-
-  public query ({ caller }) func getAllTournamentJoinRequests() : async [TournamentJoinRequest] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view tournament join requests");
-    };
-    tournamentJoinRequests.values().toArray();
-  };
-
-  public query ({ caller }) func getPendingDepositRequests() : async [AdminDepositRequest] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view deposit requests");
-    };
-
-    depositRequests.values().toArray().filter(func(req : AdminDepositRequest) : Bool {
-      switch (req.status) {
-        case (#pending) { true };
-        case (_) { false };
-      };
-    });
-  };
-
-  public query ({ caller }) func getAllUsers() : async [UserProfile] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view all users");
-    };
-    userProfiles.values().toArray();
-  };
-
-  public query ({ caller }) func getUserBalance() : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can check balance");
-    };
-    let userId = getUserIdOrTrap(caller);
-    getUserBalanceInternal(userId);
-  };
-
-  func getUserBalanceInternal(userId : UserId) : Nat {
-    coinBalances.get(userId).get(0);
-  };
-
-  public query ({ caller }) func getBalanceByUserId(userId : UserId) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can perform this action");
-    };
-    getUserBalanceInternal(userId);
-  };
-
-  public query ({ caller }) func getBalanceByPrincipalId(principalId : Principal) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can perform this action");
-    };
-    switch (principalToUserId.get(principalId)) {
-      case (null) { 0 };
-      case (?userId) { getUserBalanceInternal(userId) };
-    };
-  };
-
-  public query ({ caller }) func getTotalBalance() : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can perform this action");
-    };
-    var total = 0;
-    for (balance in coinBalances.values()) {
-      total += balance;
-    };
-    total;
   };
 
   public shared ({ caller }) func deposit(amount : Nat) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not (isAuthorizedUserOrPermanentAdmin(caller))) {
       Runtime.trap("Unauthorized: Only users can make deposits");
     };
 
@@ -275,7 +284,7 @@ actor {
   };
 
   public shared ({ caller }) func approveDeposit(requestId : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can approve deposits");
     };
 
@@ -300,7 +309,7 @@ actor {
   };
 
   public shared ({ caller }) func rejectDeposit(requestId : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can reject deposits");
     };
 
@@ -323,7 +332,7 @@ actor {
   };
 
   public shared ({ caller }) func adminDirectDeposit(userId : UserId, amount : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform direct deposits");
     };
 
@@ -346,7 +355,7 @@ actor {
   };
 
   public shared ({ caller }) func adminDirectDepositByPrincipal(userPrincipal : Principal, amount : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform direct deposits");
     };
 
@@ -374,14 +383,14 @@ actor {
   };
 
   public query ({ caller }) func getDirectDepositHistory() : async [DirectDeposit] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can view direct deposit history");
     };
     directDepositHistory.values().toArray();
   };
 
   public shared ({ caller }) func joinTournament(freeFireUid : Text, whatsappNumber : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not (isAuthorizedUserOrPermanentAdmin(caller))) {
       Runtime.trap("Unauthorized: Only users can join tournaments");
     };
 
@@ -424,7 +433,7 @@ actor {
   };
 
   public shared ({ caller }) func setEntryFee(entryFee : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     tournamentInfo := {
@@ -433,7 +442,7 @@ actor {
   };
 
   public shared ({ caller }) func setTournamentEntryOpen(isOpen : Bool) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     tournamentInfo := {
@@ -442,7 +451,7 @@ actor {
   };
 
   public shared ({ caller }) func setMatchCount(matchCount : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     tournamentInfo := {
@@ -451,7 +460,7 @@ actor {
   };
 
   public shared ({ caller }) func setMatchTime(matchTime : Time.Time) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     tournamentInfo := {
@@ -460,21 +469,21 @@ actor {
   };
 
   public shared ({ caller }) func setMatch(matchId : Nat, matchInfo : MatchInfo) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     matches.add(matchId, matchInfo);
   };
 
   public shared ({ caller }) func updateMatch(matchId : Nat, matchInfo : MatchInfo) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     matches.add(matchId, matchInfo);
   };
 
   public shared ({ caller }) func updateMatchTime(matchId : Nat, newTime : Time.Time) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     switch (matches.get(matchId)) {
@@ -489,7 +498,7 @@ actor {
   };
 
   public shared ({ caller }) func updateTournament(updateRequest : AdminUpdateTournamentRequest) : async TournamentInfo {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     let updatedTournament : TournamentInfo = {
@@ -504,12 +513,36 @@ actor {
   };
 
   public shared ({ caller }) func updateTournamentMatches(matchUpdates : [AdminTournamentMatchUpdate]) : async [MatchInfo] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not isAdminOrPermanentAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
     for (update in matchUpdates.values()) {
       matches.add(update.matchId, update.matchInfo);
     };
     matches.values().toArray();
+  };
+
+  public query ({ caller }) func getAllTournamentJoinRequests() : async [TournamentJoinRequest] {
+    if (not isAdminOrPermanentAdmin(caller)) {
+      Runtime.trap("Unauthorized: Only admins can view tournament join requests");
+    };
+    tournamentJoinRequests.values().toArray();
+  };
+
+  func isPermanentAdmin(caller : Principal) : Bool {
+    switch (userProfiles.get(caller)) {
+      case (null) { false };
+      case (?profile) {
+        profile.email == permanentAdminEmail;
+      };
+    };
+  };
+
+  func isAdminOrPermanentAdmin(caller : Principal) : Bool {
+    isPermanentAdmin(caller) or AccessControl.isAdmin(accessControlState, caller);
+  };
+
+  func isAuthorizedUserOrPermanentAdmin(caller : Principal) : Bool {
+    isPermanentAdmin(caller) or AccessControl.hasPermission(accessControlState, caller, #user);
   };
 };

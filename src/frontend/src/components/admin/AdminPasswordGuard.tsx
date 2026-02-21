@@ -3,11 +3,11 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import GamingButton from '../common/GamingButton';
 import GamingCard from '../common/GamingCard';
-import { Lock, Shield } from 'lucide-react';
+import { Lock, Shield, AlertCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useActor } from '../../hooks/useActor';
 
-const CORRECT_PASSWORD = 'Niranjan@123';
-const SESSION_KEY = 'admin_authenticated';
+const SESSION_KEY = 'tnff_admin_role';
 
 interface AdminPasswordGuardProps {
   children: React.ReactNode;
@@ -17,35 +17,129 @@ export default function AdminPasswordGuard({ children }: AdminPasswordGuardProps
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [actorError, setActorError] = useState<string | null>(null);
+  const { actor, isFetching: actorLoading } = useActor();
 
   useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] AdminPasswordGuard - Checking session authentication`);
+    
     const sessionAuth = sessionStorage.getItem(SESSION_KEY);
-    if (sessionAuth === 'true') {
+    if (sessionAuth === 'admin') {
+      console.log(`[${timestamp}] AdminPasswordGuard - Admin role found in session`);
       setIsAuthenticated(true);
     }
     setIsChecking(false);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] AdminPasswordGuard - Actor state:`, {
+      actorAvailable: !!actor,
+      actorLoading,
+    });
+
+    if (!actorLoading && !actor) {
+      const errorMsg = 'Unable to connect to authentication service';
+      console.error(`[${timestamp}] AdminPasswordGuard - ${errorMsg}`);
+      setActorError(errorMsg);
+    } else if (actor) {
+      console.log(`[${timestamp}] AdminPasswordGuard - Actor initialized successfully`);
+      setActorError(null);
+    }
+  }, [actor, actorLoading]);
+
+  const handleRetry = () => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] AdminPasswordGuard - Manual retry requested`);
+    setActorError(null);
+    window.location.reload();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const timestamp = new Date().toISOString();
     
-    if (password === CORRECT_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      toast.success('Access granted!');
-    } else {
-      toast.error('Incorrect password. Access denied.');
+    console.log(`[${timestamp}] AdminPasswordGuard - Authentication attempt started`);
+
+    if (!actor || actorLoading) {
+      const errorMsg = 'Actor not available. Please wait for connection to complete.';
+      console.error(`[${timestamp}] AdminPasswordGuard - ${errorMsg}`);
+      toast.error(errorMsg);
+      setActorError(errorMsg);
+      return;
+    }
+
+    setIsVerifying(true);
+
+    try {
+      console.log(`[${timestamp}] AdminPasswordGuard - Calling backend isCallerAdmin`);
+      
+      const isAdmin = await actor.isCallerAdmin();
+      
+      console.log(`[${timestamp}] AdminPasswordGuard - Backend response:`, { isAdmin });
+
+      if (isAdmin) {
+        console.log(`[${timestamp}] AdminPasswordGuard - Authentication successful, storing admin role`);
+        // Store admin role in session storage BEFORE setting authenticated state
+        sessionStorage.setItem(SESSION_KEY, 'admin');
+        setIsAuthenticated(true);
+        toast.success('Access granted!');
+      } else {
+        console.warn(`[${timestamp}] AdminPasswordGuard - Authentication failed - not admin`);
+        toast.error('Access denied. Admin privileges required.');
+        setPassword('');
+      }
+    } catch (error: any) {
+      const errorTimestamp = new Date().toISOString();
+      console.error(`[${errorTimestamp}] AdminPasswordGuard - Authentication error:`, {
+        message: error?.message,
+        stack: error?.stack,
+        name: error?.name,
+      });
+      
+      toast.error(error.message || 'Authentication failed. Please try again.');
       setPassword('');
+    } finally {
+      setIsVerifying(false);
     }
   };
 
-  if (isChecking) {
+  if (isChecking || actorLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ff-orange mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Checking authentication...</p>
+          <p className="text-muted-foreground">
+            {actorLoading ? 'Connecting to authentication service...' : 'Checking authentication...'}
+          </p>
         </div>
+      </div>
+    );
+  }
+
+  if (actorError) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <GamingCard glowColor="orange" className="max-w-md w-full">
+          <div className="text-center space-y-6">
+            <AlertCircle className="text-destructive mx-auto" size={64} />
+            <div>
+              <h2 className="text-2xl font-bold text-destructive mb-2">Connection Error</h2>
+              <p className="text-muted-foreground mb-4">
+                Unable to connect to authentication service. Please refresh and try again.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Error: {actorError}
+              </p>
+            </div>
+            <GamingButton onClick={handleRetry} className="w-full">
+              <RefreshCw size={18} className="mr-2" />
+              Retry Connection
+            </GamingButton>
+          </div>
+        </GamingCard>
       </div>
     );
   }
@@ -81,11 +175,25 @@ export default function AdminPasswordGuard({ children }: AdminPasswordGuardProps
                 className="bg-background border-muted-foreground/20 focus:border-ff-orange text-lg"
                 required
                 autoFocus
+                disabled={isVerifying || !actor || actorLoading}
               />
             </div>
-            <GamingButton type="submit" className="w-full">
-              <Lock size={18} className="mr-2" />
-              Unlock Admin Panel
+            <GamingButton 
+              type="submit" 
+              className="w-full"
+              disabled={isVerifying || !actor || actorLoading}
+            >
+              {isVerifying ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <Lock size={18} className="mr-2" />
+                  Unlock Admin Panel
+                </>
+              )}
             </GamingButton>
           </form>
 

@@ -51,6 +51,7 @@ export interface TournamentInfo {
     entryFee: bigint;
 }
 export interface UserProfile {
+    principal: Principal;
     userId: UserId;
     name: string;
     email: string;

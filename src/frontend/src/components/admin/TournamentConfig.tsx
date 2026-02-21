@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   useGetTournamentInfo,
   useSetTournamentEntryOpen,
@@ -6,14 +6,19 @@ import {
   useSetMatchTime,
   useSetMatchCount,
 } from '../../hooks/useQueries';
+import { useActor } from '../../hooks/useActor';
 import GamingButton from '../common/GamingButton';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
-import { Settings } from 'lucide-react';
+import { Settings, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+
+const SESSION_KEY = 'tnff_admin_role';
 
 export default function TournamentConfig() {
   const { data: tournamentInfo, isLoading } = useGetTournamentInfo();
+  const { actor, isFetching: actorLoading } = useActor();
   const setTournamentStatus = useSetTournamentEntryOpen();
   const setEntryFee = useSetEntryFee();
   const setMatchTime = useSetMatchTime();
@@ -23,15 +28,35 @@ export default function TournamentConfig() {
   const [matchCountInput, setMatchCountInput] = useState('');
   const [matchTimeInput, setMatchTimeInput] = useState('');
 
+  // Check session storage for admin role
+  useEffect(() => {
+    const sessionRole = sessionStorage.getItem(SESSION_KEY);
+    if (sessionRole !== 'admin') {
+      console.warn('TournamentConfig - Admin role not found in session');
+      toast.error('Admin session expired. Please re-authenticate.');
+    }
+  }, []);
+
+  // Verify actor availability before operations
+  const checkActorAvailability = (): boolean => {
+    if (!actor || actorLoading) {
+      toast.error('Connection not ready. Please wait and try again.');
+      return false;
+    }
+    return true;
+  };
+
   if (isLoading) {
     return <div className="text-center text-muted-foreground">Loading tournament config...</div>;
   }
 
   const handleToggleStatus = () => {
+    if (!checkActorAvailability()) return;
     setTournamentStatus.mutate(!tournamentInfo?.status);
   };
 
   const handleUpdateEntryFee = () => {
+    if (!checkActorAvailability()) return;
     const fee = parseInt(entryFeeInput);
     if (fee > 0) {
       setEntryFee.mutate(fee);
@@ -40,6 +65,7 @@ export default function TournamentConfig() {
   };
 
   const handleUpdateMatchCount = () => {
+    if (!checkActorAvailability()) return;
     const count = parseInt(matchCountInput);
     if (count >= 0) {
       setMatchCount.mutate(count);
@@ -48,6 +74,7 @@ export default function TournamentConfig() {
   };
 
   const handleUpdateMatchTime = () => {
+    if (!checkActorAvailability()) return;
     const time = new Date(matchTimeInput).getTime() * 1000000;
     if (time > 0) {
       setMatchTime.mutate(BigInt(time));
@@ -61,6 +88,15 @@ export default function TournamentConfig() {
         <Settings className="mr-2 text-ff-orange" size={24} />
         Tournament Configuration
       </h2>
+
+      {(!actor || actorLoading) && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="text-destructive" size={20} />
+          <p className="text-sm text-destructive">
+            Connection not ready. Please wait for actor initialization.
+          </p>
+        </div>
+      )}
 
       {/* Current Status */}
       <div className="bg-background/50 rounded-lg p-4 space-y-3">
@@ -103,7 +139,7 @@ export default function TournamentConfig() {
           id="tournament-status"
           checked={tournamentInfo?.status || false}
           onCheckedChange={handleToggleStatus}
-          disabled={setTournamentStatus.isPending}
+          disabled={setTournamentStatus.isPending || !actor || actorLoading}
         />
       </div>
 
@@ -121,10 +157,11 @@ export default function TournamentConfig() {
             value={entryFeeInput}
             onChange={(e) => setEntryFeeInput(e.target.value)}
             className="bg-background border-muted-foreground/20"
+            disabled={!actor || actorLoading}
           />
           <GamingButton
             onClick={handleUpdateEntryFee}
-            disabled={setEntryFee.isPending || !entryFeeInput}
+            disabled={setEntryFee.isPending || !entryFeeInput || !actor || actorLoading}
             variant="secondary"
           >
             Update
@@ -146,10 +183,11 @@ export default function TournamentConfig() {
             value={matchCountInput}
             onChange={(e) => setMatchCountInput(e.target.value)}
             className="bg-background border-muted-foreground/20"
+            disabled={!actor || actorLoading}
           />
           <GamingButton
             onClick={handleUpdateMatchCount}
-            disabled={setMatchCount.isPending || !matchCountInput}
+            disabled={setMatchCount.isPending || !matchCountInput || !actor || actorLoading}
             variant="secondary"
           >
             Update
@@ -169,10 +207,11 @@ export default function TournamentConfig() {
             value={matchTimeInput}
             onChange={(e) => setMatchTimeInput(e.target.value)}
             className="bg-background border-muted-foreground/20"
+            disabled={!actor || actorLoading}
           />
           <GamingButton
             onClick={handleUpdateMatchTime}
-            disabled={setMatchTime.isPending || !matchTimeInput}
+            disabled={setMatchTime.isPending || !matchTimeInput || !actor || actorLoading}
             variant="secondary"
           >
             Update

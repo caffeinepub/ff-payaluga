@@ -4,21 +4,24 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import GamingButton from './common/GamingButton';
 import { useSaveCallerUserProfile } from '../hooks/useQueries';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import type { UserProfile } from '../backend';
 
 export default function ProfileSetupModal() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const saveProfile = useSaveCallerUserProfile();
+  const { identity } = useInternetIdentity();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
+    if (!name.trim() || !email.trim() || !identity) return;
 
     const profile: UserProfile = {
       userId: BigInt(0),
       name: name.trim(),
       email: email.trim(),
+      principal: identity.getPrincipal(),
     };
 
     saveProfile.mutate(profile);
@@ -30,7 +33,7 @@ export default function ProfileSetupModal() {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-ff-orange">Complete Your Profile</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Welcome to FF PAYALUGA! Please provide your details to get started.
+            Welcome to TN FF BATTLE! Please provide your details to get started.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">

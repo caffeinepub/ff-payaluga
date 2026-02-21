@@ -1,37 +1,57 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T06:29:53.697Z",
-  "summary": "The diff implements comprehensive actor initialization checks, error handling, and logging throughout the frontend, focusing on WalletDeposit.tsx and useQueries.ts. Key changes include: null checks before actor method calls, loading state handling during actor initialization, detailed error logging with timestamps, user-friendly error messages, and connection error state management. However, the useActor hook itself was not modified (constraint: immutable), so REQ-59 enhancements were not directly implemented in that file.",
+  "generatedAt": "2026-02-21T10:28:39.657Z",
+  "summary": "The diff partially implements the requirements but has critical gaps. REQ-1 (storing permanent admin email as constant) is implemented. REQ-2 (automatic admin role assignment) is missing - there's no evidence of automatic role assignment logic in user profile creation/retrieval. REQ-3 (admin authentication flow updates) is partially implemented with helper functions but lacks the core auto-assignment mechanism. The diff shows infrastructure changes (migration, helper functions) but not the actual automatic role assignment on login/profile creation.",
   "missing_requirements": [
     {
-      "id": "REQ-59",
-      "requirement": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
-      "reason": "The diff shows modifications to WalletDeposit.tsx and useQueries.ts that consume the useActor hook, but the useActor hook file itself (frontend/src/hooks/useActor.ts) is listed as immutable in constraints and shows no changes in the diff. The consuming components check actor availability, but the hook itself was not enhanced as specified.",
+      "id": "REQ-2",
+      "requirement": "Automatically assign role = 'admin' when the logged-in user's email matches 'niranjanniranjan88464@gmail.com'",
+      "reason": "The diff shows permanentAdminEmail constant and helper functions (isAdminOrPermanentAdmin, isAuthorizedUserOrPermanentAdmin) but no evidence of automatic role assignment during user profile creation or retrieval. The saveCallerUserProfile and getCallerUserProfile functions (truncated in diff) do not show logic to check email and set role to 'admin'.",
       "evidence": [
-        "frontend/src/hooks/useActor.ts (listed as immutable constraint)",
-        "frontend-file-summaries.txt (no mention of useActor.ts modifications)"
+        "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-57",
-      "requirement": "Network failures trigger automatic retry logic with exponential backoff",
-      "reason": "The diff shows useRetryConnection hook usage in WalletDeposit.tsx and a manualRetry button, but there is no evidence of automatic retry logic with exponential backoff being triggered on network failures. The retry appears to be manual only.",
+      "id": "REQ-2",
+      "requirement": "The isCallerAdmin function returns true for the permanent admin email",
+      "reason": "Helper functions like isAdminOrPermanentAdmin exist, but there's no evidence that isCallerAdmin() itself was updated to return true for the permanent admin email. The diff is truncated and doesn't show the isCallerAdmin implementation.",
       "evidence": [
-        "frontend/src/pages/WalletDeposit.tsx (manualRetry function called on button click, not automatically on network failure)"
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "No manual role assignment or token setup is required for the permanent admin",
+      "reason": "Without automatic role assignment on profile creation/retrieval (REQ-2), the permanent admin would still require manual role setup. The helper functions check email but don't automatically assign the role.",
+      "evidence": [
+        "backend/main.mo"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.85,
+  "hallucinated_features": [
+    {
+      "description": "Migration module for UserProfile schema with principal field",
+      "reason": "BuildRequest contains no requirements for data migration or adding a principal field to UserProfile. This appears to be implementation detail not requested in the spec.",
+      "evidence": [
+        "backend/migration.mo",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Frontend ProfileSetupModal changes to include principal in profile data",
+      "reason": "BuildRequest explicitly states as a constraint: 'Do not modify frontend authentication components'. While ProfileSetupModal isn't explicitly listed, adding principal field to profile submission wasn't requested and appears to exceed the scope.",
+      "evidence": [
+        "frontend/src/components/ProfileSetupModal.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.75,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/admin/DepositVerification.tsx",
-    "frontend/src/components/admin/JoinRequestsList.tsx",
-    "frontend/src/components/layout/Navigation.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminPanel.tsx",
-    "frontend/src/pages/WalletDeposit.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
     "project_state.json"
   ]
 }

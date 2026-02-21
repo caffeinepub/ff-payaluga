@@ -56,6 +56,7 @@ export interface TournamentJoinRequest {
 }
 export type UserId = bigint;
 export interface UserProfile {
+  'principal' : Principal,
   'userId' : UserId,
   'name' : string,
   'email' : string,

@@ -35,6 +35,7 @@ export const TournamentJoinRequest = IDL.Record({
   'userPrincipal' : IDL.Principal,
 });
 export const UserProfile = IDL.Record({
+  'principal' : IDL.Principal,
   'userId' : UserId,
   'name' : IDL.Text,
   'email' : IDL.Text,
@@ -191,6 +192,7 @@ export const idlFactory = ({ IDL }) => {
     'userPrincipal' : IDL.Principal,
   });
   const UserProfile = IDL.Record({
+    'principal' : IDL.Principal,
     'userId' : UserId,
     'name' : IDL.Text,
     'email' : IDL.Text,

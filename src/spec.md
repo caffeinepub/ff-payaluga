@@ -1,13 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Fix actor initialization and deposit network connectivity errors in the wallet deposit flow.
+**Goal:** Set a permanent admin email that automatically receives admin role upon login.
 
 **Planned changes:**
-- Add null checks and loading states to prevent premature access to the actor instance in WalletDeposit.tsx
-- Improve actor connection sequence to ensure canister ID resolution, authentication verification, and actor creation complete before deposit submission
-- Add defensive checks and try-catch blocks around all actor method calls in the deposit submission flow
-- Enhance useActor hook to validate actor readiness and provide clear error states
-- Add comprehensive error logging to capture actor initialization status, connection attempts, and exceptions
+- Store 'niranjanniranjan88464@gmail.com' as a constant in the backend main actor
+- Automatically assign role = 'admin' when a user logs in with the permanent admin email
+- Update admin authentication flow to recognize the permanent admin without manual role assignment
 
-**User-visible outcome:** Users can successfully access the deposit page and submit deposits without encountering "Actor not available" or network connectivity errors. Loading states and clear error messages guide users through the deposit process.
+**User-visible outcome:** The user with email 'niranjanniranjan88464@gmail.com' will have immediate access to all admin panels (AdminPanel, TournamentAdminPage, DepositAdminPage) upon login without requiring any manual role setup.

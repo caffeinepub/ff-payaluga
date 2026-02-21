@@ -1,83 +1,50 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T06:29:53.702Z",
+  "generatedAt": "2026-02-21T10:28:39.659Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 5,
+    "total": 3,
+    "implemented": 0,
     "items": [
       {
-        "id": "REQ-56",
-        "summary": "Fix the 'Actor not available' error in WalletDeposit.tsx by ensuring the backend actor is fully initialized before any deposit operations. Add null checks and loading states to prevent premature access to the actor instance.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ]
+        "id": "REQ-1",
+        "summary": "Store the permanent admin email 'niranjanniranjan88464@gmail.com' as a constant in the backend main actor",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
-        "id": "REQ-57",
-        "summary": "Resolve deposit network connectivity issues in WalletDeposit.tsx by improving the actor connection sequence. Ensure canister ID resolution, authentication state verification, and actor creation all complete successfully before allowing deposit submission.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ]
+        "id": "REQ-2",
+        "summary": "Automatically assign role = 'admin' when the logged-in user's email matches 'niranjanniranjan88464@gmail.com'",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
-        "id": "REQ-58",
-        "summary": "Add defensive checks in the deposit submission flow to verify the actor instance exists and is ready before calling backend methods. Wrap all actor method calls in try-catch blocks with specific error handling for actor availability issues.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ]
-      },
-      {
-        "id": "REQ-59",
-        "summary": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-60",
-        "summary": "Add comprehensive error logging in WalletDeposit.tsx to capture the full actor initialization and deposit submission flow. Log actor creation status, canister ID resolution, authentication state, connection attempts, and all thrown exceptions to diagnose network issues.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/WalletDeposit.tsx"
-        ]
+        "id": "REQ-3",
+        "summary": "Update the admin authentication flow to recognize the permanent admin email without requiring manual role assignment",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/admin/DepositVerification.tsx",
-    "frontend/src/components/admin/JoinRequestsList.tsx",
-    "frontend/src/components/layout/Navigation.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminPanel.tsx",
-    "frontend/src/pages/WalletDeposit.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

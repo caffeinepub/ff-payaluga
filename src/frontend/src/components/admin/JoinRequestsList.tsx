@@ -1,12 +1,25 @@
+import { useEffect } from 'react';
 import { useGetTournamentJoinRequests } from '../../hooks/useQueries';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Trophy } from 'lucide-react';
+import { Trophy, AlertCircle } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useState } from 'react';
+import { toast } from 'sonner';
+
+const SESSION_KEY = 'tnff_admin_role';
 
 export default function JoinRequestsList() {
   const { data: joinRequests, isLoading } = useGetTournamentJoinRequests();
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Check session storage for admin role
+  useEffect(() => {
+    const sessionRole = sessionStorage.getItem(SESSION_KEY);
+    if (sessionRole !== 'admin') {
+      console.warn('JoinRequestsList - Admin role not found in session');
+      toast.error('Admin session expired. Please re-authenticate.');
+    }
+  }, []);
 
   const filteredRequests = joinRequests?.filter(
     (request) =>
@@ -49,16 +62,18 @@ export default function JoinRequestsList() {
             {filteredRequests && filteredRequests.length > 0 ? (
               filteredRequests.map((request, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium text-ff-orange">{request.userId.toString()}</TableCell>
-                  <TableCell className="font-mono">{request.freeFireUid}</TableCell>
-                  <TableCell className="font-medium">{request.whatsappNumber}</TableCell>
-                  <TableCell>{request.entryFeePaid.toString()} Coins</TableCell>
-                  <TableCell>{new Date(Number(request.joinTimestamp) / 1000000).toLocaleString()}</TableCell>
+                  <TableCell className="font-medium text-ff-cyan">{request.userId.toString()}</TableCell>
+                  <TableCell>{request.freeFireUid}</TableCell>
+                  <TableCell>{request.whatsappNumber}</TableCell>
+                  <TableCell className="text-ff-orange">{request.entryFeePaid.toString()} Coins</TableCell>
+                  <TableCell>
+                    {new Date(Number(request.joinTimestamp) / 1000000).toLocaleString()}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                   No join requests found
                 </TableCell>
               </TableRow>

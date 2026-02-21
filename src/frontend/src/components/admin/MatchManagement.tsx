@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGetPendingTournaments, useSetMatch, useUpdateMatch } from '../../hooks/useQueries';
+import { useActor } from '../../hooks/useActor';
 import GamingButton from '../common/GamingButton';
 import GamingCard from '../common/GamingCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Trophy, Plus, Edit, Search } from 'lucide-react';
+import { Trophy, Plus, Edit, Search, AlertCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { toast } from 'sonner';
 import type { MatchInfo } from '../../backend';
+
+const SESSION_KEY = 'tnff_admin_role';
 
 export default function MatchManagement() {
   const { data: matches, isLoading } = useGetPendingTournaments();
+  const { actor, isFetching: actorLoading } = useActor();
   const setMatch = useSetMatch();
   const updateMatch = useUpdateMatch();
   
@@ -26,6 +31,24 @@ export default function MatchManagement() {
     matchTime: '',
   });
 
+  // Check session storage for admin role
+  useEffect(() => {
+    const sessionRole = sessionStorage.getItem(SESSION_KEY);
+    if (sessionRole !== 'admin') {
+      console.warn('MatchManagement - Admin role not found in session');
+      toast.error('Admin session expired. Please re-authenticate.');
+    }
+  }, []);
+
+  // Verify actor availability before operations
+  const checkActorAvailability = (): boolean => {
+    if (!actor || actorLoading) {
+      toast.error('Connection not ready. Please wait and try again.');
+      return false;
+    }
+    return true;
+  };
+
   const filteredMatches = matches?.filter(
     (match) =>
       match.playerUID.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,6 +57,8 @@ export default function MatchManagement() {
 
   const handleCreateMatch = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!checkActorAvailability()) return;
     
     const matchInfo: MatchInfo = {
       playerUID: formData.playerUID,
@@ -53,6 +78,7 @@ export default function MatchManagement() {
   const handleUpdateMatch = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!checkActorAvailability()) return;
     if (selectedMatchId === null) return;
 
     const matchInfo: MatchInfo = {
@@ -88,6 +114,15 @@ export default function MatchManagement() {
 
   return (
     <div className="space-y-4">
+      {(!actor || actorLoading) && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="text-destructive" size={20} />
+          <p className="text-sm text-destructive">
+            Connection not ready. Match operations are temporarily unavailable.
+          </p>
+        </div>
+      )}
+
       <div className="flex items-center justify-between flex-wrap gap-4">
         <h2 className="text-xl font-bold text-foreground flex items-center">
           <Trophy className="mr-2 text-ff-orange" size={24} />
@@ -106,7 +141,7 @@ export default function MatchManagement() {
           </div>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <GamingButton size="sm">
+              <GamingButton size="sm" disabled={!actor || actorLoading}>
                 <Plus size={16} className="mr-1" />
                 Create Match
               </GamingButton>
@@ -200,6 +235,7 @@ export default function MatchManagement() {
                       size="sm"
                       variant="secondary"
                       onClick={() => openEditDialog(index, match)}
+                      disabled={!actor || actorLoading}
                     >
                       <Edit size={16} className="mr-1" />
                       Edit
