@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import GamingButton from '../common/GamingButton';
 import GamingCard from '../common/GamingCard';
 import { Lock, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+
+const CORRECT_PASSWORD = 'Niranjan@123';
+const SESSION_KEY = 'admin_authenticated';
 
 interface AdminPasswordGuardProps {
   children: React.ReactNode;
@@ -13,18 +16,39 @@ interface AdminPasswordGuardProps {
 export default function AdminPasswordGuard({ children }: AdminPasswordGuardProps) {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    const sessionAuth = sessionStorage.getItem(SESSION_KEY);
+    if (sessionAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+    setIsChecking(false);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (password === 'admin123') {
+    if (password === CORRECT_PASSWORD) {
       setIsAuthenticated(true);
+      sessionStorage.setItem(SESSION_KEY, 'true');
       toast.success('Access granted!');
     } else {
       toast.error('Incorrect password. Access denied.');
       setPassword('');
     }
   };
+
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ff-orange mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     return <>{children}</>;

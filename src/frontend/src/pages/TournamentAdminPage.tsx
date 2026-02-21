@@ -1,28 +1,24 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useIsCallerAdmin, useGetCallerUserProfile } from '../hooks/useQueries';
 import TournamentPasswordGuard from '../components/admin/TournamentPasswordGuard';
 import MatchManagement from '../components/admin/MatchManagement';
 import JoinRequestsList from '../components/admin/JoinRequestsList';
 import TournamentConfig from '../components/admin/TournamentConfig';
-import AccessDeniedScreen from '../components/admin/AccessDeniedScreen';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Trophy, Users, Settings } from 'lucide-react';
 
 export default function TournamentAdminPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
-  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
 
   useEffect(() => {
-    if (!identity && !profileLoading) {
+    if (!identity) {
       navigate({ to: '/login' });
     }
-  }, [identity, profileLoading, navigate]);
+  }, [identity, navigate]);
 
-  if (!identity || profileLoading || adminLoading) {
+  if (!identity) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -31,10 +27,6 @@ export default function TournamentAdminPage() {
         </div>
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return <AccessDeniedScreen />;
   }
 
   return (

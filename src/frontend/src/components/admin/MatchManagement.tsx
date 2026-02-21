@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetPendingMatches, useSetMatch, useUpdateMatch } from '../../hooks/useQueries';
+import { useGetPendingTournaments, useSetMatch, useUpdateMatch } from '../../hooks/useQueries';
 import GamingButton from '../common/GamingButton';
 import GamingCard from '../common/GamingCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import type { MatchInfo } from '../../backend';
 
 export default function MatchManagement() {
-  const { data: matches, isLoading } = useGetPendingMatches();
+  const { data: matches, isLoading } = useGetPendingTournaments();
   const setMatch = useSetMatch();
   const updateMatch = useUpdateMatch();
   

@@ -11,8 +11,6 @@ import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 
-
-
 actor {
   include MixinStorage();
   let accessControlState = AccessControl.initState();
@@ -155,14 +153,17 @@ actor {
     };
   };
 
+  // Public query - no authentication required (guests can view)
   public query func getEntryFee() : async Nat {
     tournamentInfo.entryFee;
   };
 
+  // Public query - no authentication required (guests can view)
   public query func isTournamentEntryOpen() : async Bool {
     tournamentInfo.status;
   };
 
+  // Public query - no authentication required (guests can view)
   public query func getTournamentInfo() : async TournamentInfo {
     tournamentInfo;
   };
@@ -253,8 +254,8 @@ actor {
       Runtime.trap("Unauthorized: Only users can make deposits");
     };
 
-    if (amount < 10 or amount > 100) {
-      Runtime.trap("Invalid deposit amount: Must be between ₹10 and ₹100");
+    if (amount < 5 or amount > 100) {
+      Runtime.trap("Invalid deposit amount: Must be between ₹5 and ₹100");
     };
 
     let userId = getUserIdOrTrap(caller);

@@ -1,88 +1,90 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update UI theme to authentic Free Fire battle aesthetics and display owner name NIRANJAN",
+  "title": "Fix actor initialization and deposit network connectivity errors",
   "requirements": [
     {
-      "id": "REQ-27",
-      "summary": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments and combat zones",
+      "id": "REQ-56",
+      "summary": "Fix 'Actor not available' error in WalletDeposit.tsx by ensuring backend actor is fully initialized before deposit operations",
       "acceptanceCriteria": [
-        "All pages display Free Fire battle-themed backgrounds instead of generic dark gaming backgrounds",
-        "Background imagery reflects actual Free Fire battle environments and combat aesthetics",
-        "Backgrounds maintain visual consistency across the application"
+        "The 'Actor not available' error no longer appears when users access the deposit page",
+        "Actor initialization is verified before rendering deposit form components",
+        "Loading state is displayed while actor initializes",
+        "User-friendly error message is shown if actor fails to initialize"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/pages/WalletDeposit.tsx",
           "operation": "modify",
-          "description": "Replace the current gaming texture background with Free Fire battle-themed backgrounds. Update the body background styling to use the generated images frontend/public/assets/generated/ff-battle-bg.dim_1920x1080.png and frontend/public/assets/generated/ff-header-bg.dim_1200x400.png as static assets. Modify CSS custom properties and background patterns to reflect authentic Free Fire battlefield environments with combat zones. Ensure backgrounds are responsive and maintain visual quality across different screen sizes."
-        },
-        {
-          "path": "frontend/src/components/layout/Layout.tsx",
-          "operation": "modify",
-          "description": "Update the Layout component to apply Free Fire battle-themed background styling. Ensure the main content wrapper uses the battlefield background image frontend/public/assets/generated/ff-battle-bg.dim_1920x1080.png as a static asset. Adjust opacity, positioning, and layering to maintain content readability while showcasing the authentic Free Fire combat environment."
-        },
-        {
-          "path": "frontend/src/pages/Home.tsx",
-          "operation": "modify",
-          "description": "Update the Home page hero section to use the Free Fire themed header background frontend/public/assets/generated/ff-header-bg.dim_1200x400.png as a static asset. Ensure the battle-themed background is prominently displayed in the hero banner area and integrates seamlessly with the page layout."
+          "description": "Add actor availability checks before rendering deposit form. Display loading state while actor initializes using the isFetching state from useActor hook. Show user-friendly error message if actor initialization fails. Prevent premature access to actor instance by conditionally rendering deposit form only when actor is confirmed available and not in fetching state."
         }
       ]
     },
     {
-      "id": "REQ-28",
-      "summary": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics including signature colors and UI patterns",
+      "id": "REQ-57",
+      "summary": "Resolve deposit network connectivity issues by improving actor connection sequence validation",
       "acceptanceCriteria": [
-        "Color scheme reflects authentic Free Fire game colors and battle UI patterns",
-        "All gaming-themed components (buttons, cards, navigation) use Free Fire battle-inspired styling",
-        "Theme maintains cohesion with Free Fire's actual in-game interface aesthetics"
+        "Users can successfully submit deposit requests without network errors",
+        "Connection state is properly validated before deposit operations",
+        "Network failures trigger automatic retry logic with exponential backoff",
+        "Clear error messages guide users when network issues occur"
       ],
       "file_operations": [
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/pages/WalletDeposit.tsx",
           "operation": "modify",
-          "description": "Update the Tailwind configuration to incorporate authentic Free Fire battle color palette. Adjust the existing FF-orange and FF-cyan colors to match the actual Free Fire game's signature colors more closely. Add new color variants inspired by Free Fire's in-game UI elements such as combat HUD colors, weapon rarity colors (common, rare, epic, legendary), and battle zone indicators. Ensure color harmony across primary, secondary, and accent colors to reflect authentic Free Fire battle aesthetics."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update global CSS variables and utility classes to reflect authentic Free Fire battle aesthetics. Modify the color scheme to match Free Fire's actual in-game interface patterns including HUD colors, status indicators, and combat UI elements. Update card backgrounds, borders, and glow effects to use Free Fire's signature visual style. Add battle-inspired texture overlays and gradient patterns that match the game's combat interface."
-        },
-        {
-          "path": "frontend/src/components/common/GamingButton.tsx",
-          "operation": "modify",
-          "description": "Update the GamingButton component styling to match authentic Free Fire battle UI button styles. Modify gradient backgrounds, hover effects, and glow animations to reflect Free Fire's in-game button aesthetics including weapon selection buttons and action buttons from the actual game interface. Ensure variants (primary, secondary, danger) align with Free Fire's UI color patterns."
-        },
-        {
-          "path": "frontend/src/components/common/GamingCard.tsx",
-          "operation": "modify",
-          "description": "Update the GamingCard component to use authentic Free Fire battle-themed styling. Modify the card background, borders, and glow effects to match Free Fire's in-game card UI elements such as loadout cards, character cards, and weapon cards. Update backdrop blur and hover effects to reflect the game's interface aesthetics."
-        },
-        {
-          "path": "frontend/src/components/layout/Navigation.tsx",
-          "operation": "modify",
-          "description": "Update the Navigation component styling to match authentic Free Fire battle UI navigation patterns. Modify the navigation bar background, link styling, and mobile menu to reflect Free Fire's in-game menu aesthetics including HUD navigation and settings menu styles. Ensure active states and hover effects align with the game's interface patterns."
+          "description": "Enhance deposit submission flow to validate connection state before calling backend methods. Verify actor instance exists and authentication state is valid before allowing deposit submission. Improve integration with existing exponential backoff retry logic in useRetryConnection hook. Add clear error messaging for different network failure scenarios (timeout, canister unreachable, authentication issues) using the errorMessages utility."
         }
       ]
     },
     {
-      "id": "REQ-29",
-      "summary": "Display the owner name 'NIRANJAN' prominently in the application interface with Free Fire battle theme styling",
+      "id": "REQ-58",
+      "summary": "Add defensive checks in deposit submission flow to verify actor instance exists before calling backend methods",
       "acceptanceCriteria": [
-        "Owner name 'NIRANJAN' is displayed in a prominent location visible to users",
-        "Name styling is consistent with Free Fire battle theme aesthetics",
-        "Text is clearly readable against the battle-themed background"
+        "All backend actor method calls are protected with existence checks",
+        "Try-catch blocks capture and handle actor-related errors gracefully",
+        "Users see specific error messages for different failure scenarios",
+        "Failed operations can be retried without refreshing the page"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/Navigation.tsx",
+          "path": "frontend/src/pages/WalletDeposit.tsx",
           "operation": "modify",
-          "description": "Add the owner name 'NIRANJAN' to the Navigation component in a prominent position such as the left side of the navigation bar or as part of the branding area. Style the name with Free Fire battle-themed typography including bold weight, uppercase letters, and appropriate color (FF-orange or contrasting color) to ensure visibility against the battlefield background. Add a subtle glow or text shadow effect to enhance readability and match Free Fire's in-game player name display style."
-        },
+          "description": "Wrap all actor method calls in try-catch blocks with explicit null/undefined checks before invocation. Add specific error handling for actor availability issues separate from other network errors. Implement retry capability that allows users to resubmit failed deposit operations without page refresh by resetting error state and enabling the submit button again. Use structured error messages from errorMessages utility to provide actionable guidance."
+        }
+      ]
+    },
+    {
+      "id": "REQ-59",
+      "summary": "Enhance useActor hook to ensure stable initialized actor instance with proper error state management",
+      "acceptanceCriteria": [
+        "useActor hook validates actor readiness before returning instance",
+        "Hook provides clear error states when actor initialization fails",
+        "Consuming components can reliably detect when actor is unavailable",
+        "Actor instance remains stable across component re-renders"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/layout/Layout.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Ensure the Layout component properly displays the owner name 'NIRANJAN' from the Navigation component. Verify that the name remains visible and readable across all pages when the battlefield background is applied. Adjust layout spacing and z-index if needed to maintain prominence of the owner name."
+          "description": "Update query hooks that depend on actor availability to properly handle actor initialization states. Add enabled conditions that check both actor existence and isFetching state from useActor. Ensure queries don't execute prematurely before actor is ready. Return loading states that accurately reflect actor dependency so consuming components can distinguish between actor initialization and data fetching."
+        }
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "summary": "Add comprehensive error logging to capture actor initialization and deposit submission flow",
+      "acceptanceCriteria": [
+        "Console logs capture all critical steps in the actor initialization sequence",
+        "Error logs include stack traces and relevant state information",
+        "Network request failures are logged with response details",
+        "Logs help identify whether issues are authentication, network, or actor-related"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/WalletDeposit.tsx",
+          "operation": "modify",
+          "description": "Add detailed console logging throughout the deposit flow. Log actor initialization status when component mounts. Log authentication state and identity verification steps. Capture all exception details including stack traces, error types, and relevant component state (actor availability, authentication status, connection state). Log network request attempts and responses. Include timestamps and contextual information to help diagnose whether failures originate from actor initialization, authentication, or network connectivity."
         }
       ]
     }

@@ -1,60 +1,68 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-20T03:29:32.567Z",
+  "generatedAt": "2026-02-21T06:29:53.702Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
-        "id": "REQ-27",
-        "summary": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments, combat zones, and in-game visual elements characteristic of real Free Fire gameplay.",
+        "id": "REQ-56",
+        "summary": "Fix the 'Actor not available' error in WalletDeposit.tsx by ensuring the backend actor is fully initialized before any deposit operations. Add null checks and loading states to prevent premature access to the actor instance.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/components/layout/Layout.tsx",
-          "frontend/src/pages/Home.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/components/layout/Layout.tsx",
-          "frontend/src/pages/Home.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
         ]
       },
       {
-        "id": "REQ-28",
-        "summary": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics, including Free Fire's signature color palette, UI patterns from the actual game, and combat-inspired visual elements throughout all components and pages.",
+        "id": "REQ-57",
+        "summary": "Resolve deposit network connectivity issues in WalletDeposit.tsx by improving the actor connection sequence. Ensure canister ID resolution, authentication state verification, and actor creation all complete successfully before allowing deposit submission.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/tailwind.config.js",
-          "frontend/src/index.css",
-          "frontend/src/components/common/GamingButton.tsx",
-          "frontend/src/components/common/GamingCard.tsx",
-          "frontend/src/components/layout/Navigation.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
         ],
         "matchedFiles": [
-          "frontend/tailwind.config.js",
-          "frontend/src/index.css",
-          "frontend/src/components/common/GamingButton.tsx",
-          "frontend/src/components/common/GamingCard.tsx",
-          "frontend/src/components/layout/Navigation.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
         ]
       },
       {
-        "id": "REQ-29",
-        "summary": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
+        "id": "REQ-58",
+        "summary": "Add defensive checks in the deposit submission flow to verify the actor instance exists and is ready before calling backend methods. Wrap all actor method calls in try-catch blocks with specific error handling for actor availability issues.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/Navigation.tsx",
-          "frontend/src/components/layout/Layout.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/Navigation.tsx",
-          "frontend/src/components/layout/Layout.tsx"
+          "frontend/src/pages/WalletDeposit.tsx"
+        ]
+      },
+      {
+        "id": "REQ-59",
+        "summary": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-60",
+        "summary": "Add comprehensive error logging in WalletDeposit.tsx to capture the full actor initialization and deposit submission flow. Log actor creation status, canister ID resolution, authentication state, connection attempts, and all thrown exceptions to diagnose network issues.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/WalletDeposit.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/WalletDeposit.tsx"
         ]
       }
     ]
@@ -64,15 +72,12 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/ff-battle-bg.dim_1920x1080.png",
-    "frontend/public/assets/generated/ff-header-bg.dim_1200x400.png",
-    "frontend/src/components/common/GamingButton.tsx",
-    "frontend/src/components/common/GamingCard.tsx",
-    "frontend/src/components/layout/Layout.tsx",
+    "frontend/src/components/admin/DepositVerification.tsx",
+    "frontend/src/components/admin/JoinRequestsList.tsx",
     "frontend/src/components/layout/Navigation.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/Home.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminPanel.tsx",
+    "frontend/src/pages/WalletDeposit.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

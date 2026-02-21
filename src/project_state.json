@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
-  "summary": "FF PAYALUGA is a private Free Fire esports tournament web application where users register with auto-generated IDs, deposit funds (₹10-₹100) via UPI ID (NIRANJAN0508@FAM), join 1v1 Clash Squad tournaments using wallet coins, and submit their FF UID + WhatsApp number. Features a comprehensive admin panel for deposit verification, coin management, tournament control, and player detail viewing. Dark Free Fire gaming theme with mobile-responsive design.",
+  "projectStateVersion": 33,
+  "summary": "TN FF BATTLE is a private Free Fire esports tournament web application where users register with auto-generated IDs, deposit funds (₹5-₹100) via UPI ID (NIRANJAN0508@FAM), join 1v1 Clash Squad tournaments using wallet coins, and submit their FF UID + WhatsApp number. Features a comprehensive admin panel for deposit verification, coin management, tournament control, and player detail viewing. Dark Free Fire gaming theme with mobile-responsive design. Admin panel password changed to 'Niranjan@123'.",
   "architectural_notes": [
     "Private access web application with manual link sharing",
     "Manual admin verification workflow for deposits and coin additions",
@@ -9,15 +9,20 @@
     "Auto-generated unique user IDs upon registration",
     "Real-time tournament join requests sent to admin dashboard",
     "UPI ID-based payment flow (NIRANJAN0508@FAM) instead of QR code scanning",
-    "Admin panel secured with password authentication (admin123)",
     "Real-time notification system for deposit requests in admin dashboard",
-    "Two separate password-protected admin websites: one for tournament match management, one for coin deposits"
+    "Two separate password-protected admin websites: one for tournament match management, one for coin deposits",
+    "Admin panel secured with password authentication (Niranjan@123)"
   ],
   "known_issues": [
-    "'ACTOR NOT AVAILABLE' error occurring during deposit submission - requires backend actor initialization fix"
+    "'Failed to connect the system' error occurring on wallet deposit verification page",
+    "Admin panel/section not visible in deployed application",
+    "Admin panel showing 'Access denied' message even when correct password 'admin123' is entered",
+    "Deposit page showing 'loading failed' error",
+    "'We could not connect server' error occurring on deposit page",
+    "'Actor not available' error occurring when users attempt to submit deposit requests",
+    "Deposit network connectivity issues preventing successful deposit submission"
   ],
   "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Free Fire battle background with combat zone environment and battlefield elements (ff-battle-bg.dim_1920x1080.png)\n- Free Fire themed header background with game UI elements (ff-header-bg.dim_1200x400.png)",
   "existing_features": [
     {
       "id": "feature-implement-user-authentication-system-with-email-and-password-registration-upon-successful-registration-automatically-generate-and-assign-a-unique-user-id-to-each-user-store-user-credentials-email-and-generated-id-in-the-backend",
@@ -168,6 +173,222 @@
       "title": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
       "reqIds": [
         "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-html-page-title-in-frontend-index-html-from-ff-payaluga-to-tn-ff-battle",
+      "title": "Update the HTML page title in frontend/index.html from 'FF PAYALUGA' to 'TN FF BATTLE'",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-references-to-ff-payaluga-in-the-navigation-header-sections-and-branding-elements-across-all-pages-to-display-tn-ff-battle-instead",
+      "title": "Update all references to 'FF PAYALUGA' in the navigation, header sections, and branding elements across all pages to display 'TN FF BATTLE' instead",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-url-sharing-functionality-in-the-footer-to-reflect-the-new-website-name-tn-ff-battle-in-the-share-message-or-displayed-text",
+      "title": "Update the URL sharing functionality in the footer to reflect the new website name 'TN FF BATTLE' in the share message or displayed text",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-system-initialization-error-occurring-on-the-deposit-page-walletdeposit-tsx-that-prevents-users-from-submitting-deposit-requests-ensure-the-backend-actor-is-properly-initialized-and-available-before-any-deposit-operations-are-attempted",
+      "title": "Fix the system initialization error occurring on the deposit page (WalletDeposit.tsx) that prevents users from submitting deposit requests. Ensure the backend actor is properly initialized and available before any deposit operations are attempted.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-proper-error-handling-and-loading-states-in-walletdeposit-tsx-to-gracefully-handle-actor-initialization-delays-and-failures-display-user-friendly-error-messages-when-the-backend-actor-cannot-be-initialized",
+      "title": "Add proper error handling and loading states in WalletDeposit.tsx to gracefully handle actor initialization delays and failures. Display user-friendly error messages when the backend actor cannot be initialized.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-resolve-the-failed-to-connect-the-system-error-occurring-on-the-wallet-deposit-page-walletdeposit-tsx-during-deposit-verification-ensure-the-backend-actor-connection-is-stable-and-properly-initialized-before-any-deposit-submission-attempts-add-comprehensive-error-logging-to-identify-the-root-cause-of-connection-failures",
+      "title": "Investigate and resolve the 'Failed to connect the system' error occurring on the wallet deposit page (WalletDeposit.tsx) during deposit verification. Ensure the backend actor connection is stable and properly initialized before any deposit submission attempts. Add comprehensive error logging to identify the root cause of connection failures.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-minimum-deposit-amount-validation-from-10-to-5-in-the-walletdeposit-tsx-component-update-all-related-ui-text-validation-messages-and-backend-validation-to-reflect-the-new-minimum-deposit-amount-of-5",
+      "title": "Update the minimum deposit amount validation from ₹10 to ₹5 in the WalletDeposit.tsx component. Update all related UI text, validation messages, and backend validation to reflect the new minimum deposit amount of ₹5.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-error-handling-in-walletdeposit-tsx-to-display-user-friendly-error-messages-when-actor-initialization-or-deposit-submission-fails-replace-technical-error-messages-with-clear-actionable-feedback-for-users",
+      "title": "Enhance error handling in WalletDeposit.tsx to display user-friendly error messages when actor initialization or deposit submission fails. Replace technical error messages with clear, actionable feedback for users.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-navigation-link-or-button-to-access-the-admin-panel-in-the-main-navigation-bar-navigation-tsx-ensure-the-admin-link-is-accessible-to-all-users-who-know-the-admin-password-and-is-prominently-displayed-in-the-navigation-menu",
+      "title": "Add a visible navigation link or button to access the admin panel in the main navigation bar (Navigation.tsx). Ensure the admin link is accessible to all users who know the admin password, and is prominently displayed in the navigation menu.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-panel-access-control-logic-to-allow-any-user-who-enters-the-correct-password-admin123-to-access-the-admin-panel-without-encountering-access-denied-messages-ensure-adminpasswordguard-tsx-properly-sets-authentication-state-after-successful-password-verification",
+      "title": "Fix the admin panel access control logic to allow any user who enters the correct password 'admin123' to access the admin panel without encountering 'Access denied' messages. Ensure AdminPasswordGuard.tsx properly sets authentication state after successful password verification.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-session-storage-keys-used-for-admin-password-authentication-are-consistent-across-adminpasswordguard-tsx-tournamentpasswordguard-tsx-depositpasswordguard-tsx-and-adminpanel-tsx-to-prevent-authentication-state-mismatches",
+      "title": "Ensure session storage keys used for admin password authentication are consistent across AdminPasswordGuard.tsx, TournamentPasswordGuard.tsx, DepositPasswordGuard.tsx, and AdminPanel.tsx to prevent authentication state mismatches.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-loading-failed-error-occurring-on-the-deposit-page-walletdeposit-tsx-review-the-actor-initialization-logic-error-handling-and-loading-state-management-to-identify-why-the-page-fails-to-load-properly-ensure-the-backend-actor-is-successfully-initialized-before-rendering-deposit-form-components",
+      "title": "Investigate and fix the 'loading failed' error occurring on the deposit page (WalletDeposit.tsx). Review the actor initialization logic, error handling, and loading state management to identify why the page fails to load properly. Ensure the backend actor is successfully initialized before rendering deposit form components.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-logging-and-debugging-output-in-walletdeposit-tsx-to-capture-the-root-cause-of-loading-failures-log-actor-initialization-status-connection-attempts-and-any-thrown-errors-to-help-diagnose-the-loading-issue",
+      "title": "Add comprehensive error logging and debugging output in WalletDeposit.tsx to capture the root cause of loading failures. Log actor initialization status, connection attempts, and any thrown errors to help diagnose the loading issue.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-simplify-admin-panel-access-to-allow-any-user-who-enters-the-correct-password-admin123-to-immediately-access-all-admin-features-without-additional-verification-or-access-denial-messages-remove-any-secondary-authentication-checks-or-role-based-restrictions-that-may-be-preventing-password-authenticated-users-from-accessing-the-admin-panel",
+      "title": "Simplify admin panel access to allow any user who enters the correct password 'admin123' to immediately access all admin features without additional verification or access denial messages. Remove any secondary authentication checks or role-based restrictions that may be preventing password-authenticated users from accessing the admin panel.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-review-and-streamline-the-authentication-flow-in-adminpanel-tsx-and-adminpasswordguard-tsx-to-ensure-there-are-no-redundant-checks-or-conflicting-authentication-logic-that-could-block-authenticated-users-ensure-the-password-guard-component-correctly-sets-and-verifies-session-storage-authentication-state",
+      "title": "Review and streamline the authentication flow in AdminPanel.tsx and AdminPasswordGuard.tsx to ensure there are no redundant checks or conflicting authentication logic that could block authenticated users. Ensure the password guard component correctly sets and verifies session storage authentication state.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-the-we-could-not-connect-server-error-occurring-on-the-deposit-page-walletdeposit-tsx-review-the-backend-actor-initialization-sequence-connection-state-management-and-error-handling-to-identify-why-the-server-connection-is-failing",
+      "title": "Diagnose and fix the 'We could not connect server' error occurring on the deposit page (WalletDeposit.tsx). Review the backend actor initialization sequence, connection state management, and error handling to identify why the server connection is failing.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-robust-retry-logic-in-walletdeposit-tsx-for-failed-backend-actor-connections-add-automatic-retry-attempts-with-exponential-backoff-when-initial-connection-fails-and-provide-users-with-a-manual-retry-button-if-automatic-retries-are-exhausted",
+      "title": "Implement robust retry logic in WalletDeposit.tsx for failed backend actor connections. Add automatic retry attempts with exponential backoff when initial connection fails, and provide users with a manual retry button if automatic retries are exhausted.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-connection-state-diagnostics-and-error-logging-throughout-the-deposit-page-actor-initialization-flow-log-actor-creation-status-canister-id-resolution-authentication-state-and-any-thrown-exceptions-to-help-identify-the-root-cause-of-connection-failures",
+      "title": "Add comprehensive connection state diagnostics and error logging throughout the deposit page actor initialization flow. Log actor creation status, canister ID resolution, authentication state, and any thrown exceptions to help identify the root cause of connection failures.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-error-messaging-in-walletdeposit-tsx-to-replace-generic-we-could-not-connect-server-messages-with-specific-user-friendly-error-descriptions-that-explain-the-connection-issue-and-suggest-potential-solutions-e-g-connection-timeout-please-check-your-internet-connection-and-try-again",
+      "title": "Improve error messaging in WalletDeposit.tsx to replace generic 'We could not connect server' messages with specific, user-friendly error descriptions that explain the connection issue and suggest potential solutions (e.g., 'Connection timeout - please check your internet connection and try again').",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-hardcoded-admin-panel-password-from-admin123-to-niranjan-123-in-adminpasswordguard-tsx-ensure-the-password-validation-logic-accepts-the-new-password-for-authentication",
+      "title": "Update the hardcoded admin panel password from 'admin123' to 'Niranjan@123' in AdminPasswordGuard.tsx. Ensure the password validation logic accepts the new password for authentication.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-hardcoded-admin-panel-password-from-admin123-to-niranjan-123-in-tournamentpasswordguard-tsx-to-maintain-consistency-across-all-admin-password-protected-areas",
+      "title": "Update the hardcoded admin panel password from 'admin123' to 'Niranjan@123' in TournamentPasswordGuard.tsx to maintain consistency across all admin password-protected areas.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-hardcoded-admin-panel-password-from-admin123-to-niranjan-123-in-depositpasswordguard-tsx-to-maintain-consistency-across-all-admin-password-protected-areas",
+      "title": "Update the hardcoded admin panel password from 'admin123' to 'Niranjan@123' in DepositPasswordGuard.tsx to maintain consistency across all admin password-protected areas.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-actor-not-available-error-in-walletdeposit-tsx-by-ensuring-the-backend-actor-is-fully-initialized-before-any-deposit-operations-add-null-checks-and-loading-states-to-prevent-premature-access-to-the-actor-instance",
+      "title": "Fix the 'Actor not available' error in WalletDeposit.tsx by ensuring the backend actor is fully initialized before any deposit operations. Add null checks and loading states to prevent premature access to the actor instance.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-resolve-deposit-network-connectivity-issues-in-walletdeposit-tsx-by-improving-the-actor-connection-sequence-ensure-canister-id-resolution-authentication-state-verification-and-actor-creation-all-complete-successfully-before-allowing-deposit-submission",
+      "title": "Resolve deposit network connectivity issues in WalletDeposit.tsx by improving the actor connection sequence. Ensure canister ID resolution, authentication state verification, and actor creation all complete successfully before allowing deposit submission.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-defensive-checks-in-the-deposit-submission-flow-to-verify-the-actor-instance-exists-and-is-ready-before-calling-backend-methods-wrap-all-actor-method-calls-in-try-catch-blocks-with-specific-error-handling-for-actor-availability-issues",
+      "title": "Add defensive checks in the deposit submission flow to verify the actor instance exists and is ready before calling backend methods. Wrap all actor method calls in try-catch blocks with specific error handling for actor availability issues.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-useactor-hook-to-ensure-it-returns-a-stable-initialized-actor-instance-with-proper-error-state-management-add-validation-to-confirm-the-actor-is-ready-before-returning-it-to-consuming-components",
+      "title": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-logging-in-walletdeposit-tsx-to-capture-the-full-actor-initialization-and-deposit-submission-flow-log-actor-creation-status-canister-id-resolution-authentication-state-connection-attempts-and-all-thrown-exceptions-to-diagnose-network-issues",
+      "title": "Add comprehensive error logging in WalletDeposit.tsx to capture the full actor initialization and deposit submission flow. Log actor creation status, canister ID resolution, authentication state, connection attempts, and all thrown exceptions to diagnose network issues.",
+      "reqIds": [
+        "REQ-60"
       ],
       "version": 1
     }
@@ -335,6 +556,62 @@
       "id": "AR-29",
       "summary": "Display owner/creator name 'NIRANJAN' prominently in the application interface",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Fix 'Failed to connect the system' error occurring on wallet deposit page during deposit verification",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Change minimum deposit amount from ₹10 to ₹5",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Admin panel/section is not visible or accessible in the deployed application",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Verify that the /admin route in App.tsx is properly configured and accessible. Ensure the AdminPanel page component is correctly imported and rendered when users navigate to the admin section.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Fix admin panel access control - anyone who enters the correct password 'admin123' should be granted access to the admin panel without seeing 'Access denied' messages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Review and fix the authentication flow in AdminPanel.tsx to ensure it correctly handles password-authenticated users and does not incorrectly redirect them to the AccessDeniedScreen component.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Verify that the backend canister is properly deployed and accessible. Ensure the canister ID is correctly configured in frontend environment variables and that the backend actor interface matches the deployed canister's API.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Verify that all admin panel components (AdminPanel.tsx, TournamentAdminPage.tsx, DepositAdminPage.tsx) continue to use the same session storage authentication mechanism after the password change, ensuring consistent access control across all admin features.",
+      "reqIds": [
+        "REQ-55"
+      ],
       "status": "pending"
     }
   ],

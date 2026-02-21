@@ -35,7 +35,7 @@ export default function LoginRegister() {
             className="h-24 w-24 mx-auto"
           />
           <div>
-            <h1 className="text-3xl font-bold text-ff-orange mb-2">Welcome to FF PAYALUGA</h1>
+            <h1 className="text-3xl font-bold text-ff-orange mb-2">Welcome to TN FF BATTLE</h1>
             <p className="text-muted-foreground">
               Login to access tournaments and manage your wallet
             </p>

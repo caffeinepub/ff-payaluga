@@ -1,11 +1,11 @@
-import { useGetAllTournamentJoinRequests } from '../../hooks/useQueries';
+import { useGetTournamentJoinRequests } from '../../hooks/useQueries';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Trophy } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useState } from 'react';
 
 export default function JoinRequestsList() {
-  const { data: joinRequests, isLoading } = useGetAllTournamentJoinRequests();
+  const { data: joinRequests, isLoading } = useGetTournamentJoinRequests();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredRequests = joinRequests?.filter(

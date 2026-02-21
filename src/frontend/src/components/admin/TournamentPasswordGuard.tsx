@@ -6,8 +6,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
 
-const CORRECT_PASSWORD = 'admin123';
-const SESSION_KEY = 'tournament_admin_authenticated';
+const CORRECT_PASSWORD = 'Niranjan@123';
+const SESSION_KEY = 'admin_authenticated';
 
 interface TournamentPasswordGuardProps {
   children: ReactNode;

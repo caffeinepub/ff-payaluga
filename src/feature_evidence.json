@@ -2,12 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-current-background-styling-across-all-pages-with-authentic-free-fire-battle-themed-backgrounds-featuring-battlefield-environments-combat-zones-and-in-game-visual-elements-characteristic-of-real-free-fire-gameplay",
-      "featureTitle": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments, combat zones, and in-game visual elements characteristic of real Free Fire gameplay.",
+      "featureId": "feature-fix-the-actor-not-available-error-in-walletdeposit-tsx-by-ensuring-the-backend-actor-is-fully-initialized-before-any-deposit-operations-add-null-checks-and-loading-states-to-prevent-premature-access-to-the-actor-instance",
+      "featureTitle": "Fix the 'Actor not available' error in WalletDeposit.tsx by ensuring the backend actor is fully initialized before any deposit operations. Add null checks and loading states to prevent premature access to the actor instance.",
       "files": [
-        "frontend/src/components/layout/Layout.tsx",
-        "frontend/src/index.css",
-        "frontend/src/pages/Home.tsx"
+        "frontend/src/pages/WalletDeposit.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -19,19 +17,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-27"
+        "REQ-56"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-application-s-color-scheme-and-theme-styling-to-match-authentic-free-fire-battle-aesthetics-including-free-fire-s-signature-color-palette-ui-patterns-from-the-actual-game-and-combat-inspired-visual-elements-throughout-all-components-and-pages",
-      "featureTitle": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics, including Free Fire's signature color palette, UI patterns from the actual game, and combat-inspired visual elements throughout all components and pages.",
+      "featureId": "feature-resolve-deposit-network-connectivity-issues-in-walletdeposit-tsx-by-improving-the-actor-connection-sequence-ensure-canister-id-resolution-authentication-state-verification-and-actor-creation-all-complete-successfully-before-allowing-deposit-submission",
+      "featureTitle": "Resolve deposit network connectivity issues in WalletDeposit.tsx by improving the actor connection sequence. Ensure canister ID resolution, authentication state verification, and actor creation all complete successfully before allowing deposit submission.",
       "files": [
-        "frontend/src/components/common/GamingButton.tsx",
-        "frontend/src/components/common/GamingCard.tsx",
-        "frontend/src/components/layout/Navigation.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
+        "frontend/src/pages/WalletDeposit.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -43,16 +37,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-28"
+        "REQ-57"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-display-the-owner-name-niranjan-prominently-in-the-application-interface-ensuring-it-is-clearly-visible-and-appropriately-styled-to-match-the-free-fire-battle-theme",
-      "featureTitle": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
+      "featureId": "feature-add-defensive-checks-in-the-deposit-submission-flow-to-verify-the-actor-instance-exists-and-is-ready-before-calling-backend-methods-wrap-all-actor-method-calls-in-try-catch-blocks-with-specific-error-handling-for-actor-availability-issues",
+      "featureTitle": "Add defensive checks in the deposit submission flow to verify the actor instance exists and is ready before calling backend methods. Wrap all actor method calls in try-catch blocks with specific error handling for actor availability issues.",
       "files": [
-        "frontend/src/components/layout/Layout.tsx",
-        "frontend/src/components/layout/Navigation.tsx"
+        "frontend/src/pages/WalletDeposit.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -64,7 +57,47 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-29"
+        "REQ-58"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enhance-the-useactor-hook-to-ensure-it-returns-a-stable-initialized-actor-instance-with-proper-error-state-management-add-validation-to-confirm-the-actor-is-ready-before-returning-it-to-consuming-components",
+      "featureTitle": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-59"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-comprehensive-error-logging-in-walletdeposit-tsx-to-capture-the-full-actor-initialization-and-deposit-submission-flow-log-actor-creation-status-canister-id-resolution-authentication-state-connection-attempts-and-all-thrown-exceptions-to-diagnose-network-issues",
+      "featureTitle": "Add comprehensive error logging in WalletDeposit.tsx to capture the full actor initialization and deposit submission flow. Log actor creation status, canister ID resolution, authentication state, connection attempts, and all thrown exceptions to diagnose network issues.",
+      "files": [
+        "frontend/src/pages/WalletDeposit.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-60"
       ],
       "confidence": "high"
     }

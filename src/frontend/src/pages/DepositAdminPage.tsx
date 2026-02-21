@@ -1,27 +1,23 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useIsCallerAdmin, useGetCallerUserProfile } from '../hooks/useQueries';
 import DepositPasswordGuard from '../components/admin/DepositPasswordGuard';
 import DirectDeposit from '../components/admin/DirectDeposit';
 import UserManagement from '../components/admin/UserManagement';
-import AccessDeniedScreen from '../components/admin/AccessDeniedScreen';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Coins, Users } from 'lucide-react';
 
 export default function DepositAdminPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
-  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
 
   useEffect(() => {
-    if (!identity && !profileLoading) {
+    if (!identity) {
       navigate({ to: '/login' });
     }
-  }, [identity, profileLoading, navigate]);
+  }, [identity, navigate]);
 
-  if (!identity || profileLoading || adminLoading) {
+  if (!identity) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -30,10 +26,6 @@ export default function DepositAdminPage() {
         </div>
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return <AccessDeniedScreen />;
   }
 
   return (

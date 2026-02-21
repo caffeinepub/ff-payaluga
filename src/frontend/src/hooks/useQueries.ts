@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import type { UserProfile, AdminDepositRequest, TournamentJoinRequest, TournamentInfo, MatchInfo, DirectDeposit } from '../backend';
 import { toast } from 'sonner';
+import { getDepositErrorMessage } from '../utils/errorMessages';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -9,8 +10,17 @@ export function useGetCallerUserProfile() {
   const query = useQuery<UserProfile | null>({
     queryKey: ['currentUserProfile'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getCallerUserProfile();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetCallerUserProfile - Fetching profile`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetCallerUserProfile - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const profile = await actor.getCallerUserProfile();
+      console.log(`[${timestamp}] useGetCallerUserProfile - Profile fetched:`, !!profile);
+      return profile;
     },
     enabled: !!actor && !actorFetching,
     retry: false,
@@ -29,14 +39,23 @@ export function useSaveCallerUserProfile() {
 
   return useMutation({
     mutationFn: async (profile: UserProfile) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSaveCallerUserProfile - Saving profile`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSaveCallerUserProfile - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.saveCallerUserProfile(profile);
+      console.log(`[${timestamp}] useSaveCallerUserProfile - Profile saved successfully`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
       toast.success('Profile saved successfully!');
     },
     onError: (error: Error) => {
+      console.error('useSaveCallerUserProfile - Error:', error);
       toast.error(error.message || 'Failed to save profile');
     },
   });
@@ -48,8 +67,17 @@ export function useGetUserBalance() {
   return useQuery<bigint>({
     queryKey: ['userBalance'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getUserBalance();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetUserBalance - Fetching balance`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetUserBalance - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const balance = await actor.getUserBalance();
+      console.log(`[${timestamp}] useGetUserBalance - Balance fetched:`, balance.toString());
+      return balance;
     },
     enabled: !!actor && !actorFetching,
   });
@@ -61,81 +89,70 @@ export function useDeposit() {
 
   return useMutation({
     mutationFn: async (amount: number) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deposit(BigInt(amount));
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userBalance'] });
-      queryClient.invalidateQueries({ queryKey: ['pendingDepositRequests'] });
-      toast.success('Deposit request submitted! Please complete payment and wait for admin approval.');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to submit deposit');
-    },
-  });
-}
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useDeposit - Starting deposit mutation:`, { 
+        amount,
+        actor: !!actor 
+      });
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useDeposit - Actor not available`);
+        throw new Error('Actor not available');
+      }
 
-export function useGetTournamentInfo() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<TournamentInfo>({
-    queryKey: ['tournamentInfo'],
-    queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getTournamentInfo();
-    },
-    enabled: !!actor && !actorFetching,
-  });
-}
-
-export function useJoinTournament() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ freeFireUid, whatsappNumber }: { freeFireUid: string; whatsappNumber: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      await actor.joinTournament(freeFireUid, whatsappNumber);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userBalance'] });
-      queryClient.invalidateQueries({ queryKey: ['allTournamentJoinRequests'] });
-      toast.success('Successfully joined tournament! Admin will contact you via WhatsApp.');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to join tournament');
-    },
-  });
-}
-
-export function useIsCallerAdmin() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<boolean>({
-    queryKey: ['isCallerAdmin'],
-    queryFn: async () => {
-      if (!actor) return false;
       try {
-        return await actor.isCallerAdmin();
-      } catch {
-        return false;
+        console.log(`[${timestamp}] useDeposit - Calling actor.deposit with amount:`, amount);
+        const result = await actor.deposit(BigInt(amount));
+        console.log(`[${timestamp}] useDeposit - Deposit successful, result:`, result.toString());
+        return result;
+      } catch (error: any) {
+        console.error(`[${timestamp}] useDeposit - Backend error:`, {
+          message: error?.message,
+          stack: error?.stack,
+          name: error?.name
+        });
+        throw error;
       }
     },
-    enabled: !!actor && !actorFetching,
+    onSuccess: () => {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useDeposit - Invalidating queries after successful deposit`);
+      queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingDeposits'] });
+    },
+    onError: (error: Error) => {
+      const timestamp = new Date().toISOString();
+      console.error(`[${timestamp}] useDeposit - Mutation error:`, {
+        message: error.message,
+        stack: error.stack
+      });
+      
+      const errorMessage = getDepositErrorMessage(error);
+      toast.error(errorMessage);
+    },
   });
 }
 
-export function useGetPendingDepositRequests() {
+export function useGetPendingDeposits() {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<AdminDepositRequest[]>({
-    queryKey: ['pendingDepositRequests'],
+    queryKey: ['pendingDeposits'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getPendingDepositRequests();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetPendingDeposits - Fetching pending deposits`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetPendingDeposits - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const deposits = await actor.getPendingDepositRequests();
+      console.log(`[${timestamp}] useGetPendingDeposits - Fetched ${deposits.length} pending deposits`);
+      return deposits;
     },
     enabled: !!actor && !actorFetching,
-    refetchInterval: 30000,
+    refetchInterval: 10000,
   });
 }
 
@@ -145,14 +162,23 @@ export function useApproveDeposit() {
 
   return useMutation({
     mutationFn: async (requestId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useApproveDeposit - Approving deposit:`, requestId.toString());
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useApproveDeposit - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.approveDeposit(requestId);
+      console.log(`[${timestamp}] useApproveDeposit - Deposit approved successfully`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingDepositRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingDeposits'] });
       toast.success('Deposit approved successfully!');
     },
     onError: (error: Error) => {
+      console.error('useApproveDeposit - Error:', error);
       toast.error(error.message || 'Failed to approve deposit');
     },
   });
@@ -164,14 +190,23 @@ export function useRejectDeposit() {
 
   return useMutation({
     mutationFn: async (requestId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useRejectDeposit - Rejecting deposit:`, requestId.toString());
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useRejectDeposit - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.rejectDeposit(requestId);
+      console.log(`[${timestamp}] useRejectDeposit - Deposit rejected successfully`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingDepositRequests'] });
-      toast.success('Deposit rejected');
+      queryClient.invalidateQueries({ queryKey: ['pendingDeposits'] });
+      toast.success('Deposit rejected successfully!');
     },
     onError: (error: Error) => {
+      console.error('useRejectDeposit - Error:', error);
       toast.error(error.message || 'Failed to reject deposit');
     },
   });
@@ -183,24 +218,116 @@ export function useGetAllUsers() {
   return useQuery<UserProfile[]>({
     queryKey: ['allUsers'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getAllUsers();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetAllUsers - Fetching all users`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetAllUsers - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const users = await actor.getAllUsers();
+      console.log(`[${timestamp}] useGetAllUsers - Fetched ${users.length} users`);
+      return users;
     },
     enabled: !!actor && !actorFetching,
   });
 }
 
-export function useGetAllTournamentJoinRequests() {
+export function useGetTournamentInfo() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<TournamentInfo>({
+    queryKey: ['tournamentInfo'],
+    queryFn: async () => {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetTournamentInfo - Fetching tournament info`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetTournamentInfo - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const info = await actor.getTournamentInfo();
+      console.log(`[${timestamp}] useGetTournamentInfo - Tournament info fetched`);
+      return info;
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useJoinTournament() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ freeFireUid, whatsappNumber }: { freeFireUid: string; whatsappNumber: string }) => {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useJoinTournament - Joining tournament:`, { freeFireUid, whatsappNumber });
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useJoinTournament - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      await actor.joinTournament(freeFireUid, whatsappNumber);
+      console.log(`[${timestamp}] useJoinTournament - Tournament joined successfully`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+      queryClient.invalidateQueries({ queryKey: ['tournamentJoinRequests'] });
+      toast.success('Successfully joined the tournament!');
+    },
+    onError: (error: Error) => {
+      console.error('useJoinTournament - Error:', error);
+      toast.error(error.message || 'Failed to join tournament');
+    },
+  });
+}
+
+export function useGetTournamentJoinRequests() {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<TournamentJoinRequest[]>({
-    queryKey: ['allTournamentJoinRequests'],
+    queryKey: ['tournamentJoinRequests'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getAllTournamentJoinRequests();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetTournamentJoinRequests - Fetching join requests`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetTournamentJoinRequests - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const requests = await actor.getAllTournamentJoinRequests();
+      console.log(`[${timestamp}] useGetTournamentJoinRequests - Fetched ${requests.length} join requests`);
+      return requests;
     },
     enabled: !!actor && !actorFetching,
-    refetchInterval: 30000,
+    refetchInterval: 10000,
+  });
+}
+
+export function useIsCallerAdmin() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['isCallerAdmin'],
+    queryFn: async () => {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useIsCallerAdmin - Checking admin status`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useIsCallerAdmin - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const isAdmin = await actor.isCallerAdmin();
+      console.log(`[${timestamp}] useIsCallerAdmin - Admin status:`, isAdmin);
+      return isAdmin;
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
   });
 }
 
@@ -210,14 +337,23 @@ export function useSetTournamentEntryOpen() {
 
   return useMutation({
     mutationFn: async (isOpen: boolean) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSetTournamentEntryOpen - Setting tournament status:`, isOpen);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSetTournamentEntryOpen - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.setTournamentEntryOpen(isOpen);
+      console.log(`[${timestamp}] useSetTournamentEntryOpen - Tournament status updated`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournamentInfo'] });
       toast.success('Tournament status updated!');
     },
     onError: (error: Error) => {
+      console.error('useSetTournamentEntryOpen - Error:', error);
       toast.error(error.message || 'Failed to update tournament status');
     },
   });
@@ -229,14 +365,23 @@ export function useSetEntryFee() {
 
   return useMutation({
     mutationFn: async (entryFee: number) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSetEntryFee - Setting entry fee:`, entryFee);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSetEntryFee - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.setEntryFee(BigInt(entryFee));
+      console.log(`[${timestamp}] useSetEntryFee - Entry fee updated`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournamentInfo'] });
       toast.success('Entry fee updated!');
     },
     onError: (error: Error) => {
+      console.error('useSetEntryFee - Error:', error);
       toast.error(error.message || 'Failed to update entry fee');
     },
   });
@@ -248,14 +393,23 @@ export function useSetMatchTime() {
 
   return useMutation({
     mutationFn: async (matchTime: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSetMatchTime - Setting match time:`, matchTime.toString());
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSetMatchTime - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.setMatchTime(matchTime);
+      console.log(`[${timestamp}] useSetMatchTime - Match time updated`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournamentInfo'] });
       toast.success('Match time updated!');
     },
     onError: (error: Error) => {
+      console.error('useSetMatchTime - Error:', error);
       toast.error(error.message || 'Failed to update match time');
     },
   });
@@ -267,29 +421,48 @@ export function useSetMatchCount() {
 
   return useMutation({
     mutationFn: async (matchCount: number) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSetMatchCount - Setting match count:`, matchCount);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSetMatchCount - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.setMatchCount(BigInt(matchCount));
+      console.log(`[${timestamp}] useSetMatchCount - Match count updated`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournamentInfo'] });
       toast.success('Match count updated!');
     },
     onError: (error: Error) => {
+      console.error('useSetMatchCount - Error:', error);
       toast.error(error.message || 'Failed to update match count');
     },
   });
 }
 
-export function useGetPendingMatches() {
+export function useGetPendingTournaments() {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<MatchInfo[]>({
-    queryKey: ['pendingMatches'],
+    queryKey: ['pendingTournaments'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getPendingTournaments();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetPendingTournaments - Fetching pending tournaments`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetPendingTournaments - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const tournaments = await actor.getPendingTournaments();
+      console.log(`[${timestamp}] useGetPendingTournaments - Fetched ${tournaments.length} pending tournaments`);
+      return tournaments;
     },
     enabled: !!actor && !actorFetching,
+    refetchInterval: 10000,
   });
 }
 
@@ -299,14 +472,23 @@ export function useSetMatch() {
 
   return useMutation({
     mutationFn: async ({ matchId, matchInfo }: { matchId: bigint; matchInfo: MatchInfo }) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useSetMatch - Setting match:`, { matchId: matchId.toString(), matchInfo });
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useSetMatch - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.setMatch(matchId, matchInfo);
+      console.log(`[${timestamp}] useSetMatch - Match set successfully`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingTournaments'] });
       toast.success('Match created successfully!');
     },
     onError: (error: Error) => {
+      console.error('useSetMatch - Error:', error);
       toast.error(error.message || 'Failed to create match');
     },
   });
@@ -318,34 +500,24 @@ export function useUpdateMatch() {
 
   return useMutation({
     mutationFn: async ({ matchId, matchInfo }: { matchId: bigint; matchInfo: MatchInfo }) => {
-      if (!actor) throw new Error('Actor not available');
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useUpdateMatch - Updating match:`, { matchId: matchId.toString(), matchInfo });
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useUpdateMatch - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
       await actor.updateMatch(matchId, matchInfo);
+      console.log(`[${timestamp}] useUpdateMatch - Match updated successfully`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingTournaments'] });
       toast.success('Match updated successfully!');
     },
     onError: (error: Error) => {
+      console.error('useUpdateMatch - Error:', error);
       toast.error(error.message || 'Failed to update match');
-    },
-  });
-}
-
-export function useUpdateMatchTime() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ matchId, newTime }: { matchId: bigint; newTime: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
-      await actor.updateMatchTime(matchId, newTime);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingMatches'] });
-      toast.success('Match time updated!');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update match time');
     },
   });
 }
@@ -355,29 +527,50 @@ export function useAdminDirectDeposit() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ userId, coinsAdded }: { userId: bigint; coinsAdded: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
-      await actor.adminDirectDeposit(userId, coinsAdded);
+    mutationFn: async ({ userId, amount }: { userId: bigint; amount: bigint }) => {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useAdminDirectDeposit - Direct deposit:`, { 
+        userId: userId.toString(), 
+        amount: amount.toString() 
+      });
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useAdminDirectDeposit - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      await actor.adminDirectDeposit(userId, amount);
+      console.log(`[${timestamp}] useAdminDirectDeposit - Direct deposit successful`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allDirectDeposits'] });
       queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+      queryClient.invalidateQueries({ queryKey: ['directDepositHistory'] });
       toast.success('Coins added successfully!');
     },
     onError: (error: Error) => {
+      console.error('useAdminDirectDeposit - Error:', error);
       toast.error(error.message || 'Failed to add coins');
     },
   });
 }
 
-export function useGetAllDirectDeposits() {
+export function useGetDirectDepositHistory() {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<DirectDeposit[]>({
-    queryKey: ['allDirectDeposits'],
+    queryKey: ['directDepositHistory'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getDirectDepositHistory();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] useGetDirectDepositHistory - Fetching deposit history`);
+      
+      if (!actor) {
+        console.error(`[${timestamp}] useGetDirectDepositHistory - Actor not available`);
+        throw new Error('Actor not available');
+      }
+      
+      const history = await actor.getDirectDepositHistory();
+      console.log(`[${timestamp}] useGetDirectDepositHistory - Fetched ${history.length} deposit records`);
+      return history;
     },
     enabled: !!actor && !actorFetching,
   });

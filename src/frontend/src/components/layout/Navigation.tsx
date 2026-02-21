@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useIsCallerAdmin, useGetPendingDepositRequests } from '../../hooks/useQueries';
+import { useIsCallerAdmin, useGetPendingDeposits } from '../../hooks/useQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import { Menu, X, Home, Wallet, Trophy, Shield, LogIn, LogOut, Flame } from 'lucide-react';
 import { useState } from 'react';
@@ -9,7 +9,7 @@ import GamingButton from '../common/GamingButton';
 export default function Navigation() {
   const { identity, login, clear, loginStatus } = useInternetIdentity();
   const { data: isAdmin } = useIsCallerAdmin();
-  const { data: pendingDeposits } = useGetPendingDepositRequests();
+  const { data: pendingDeposits } = useGetPendingDeposits();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function Navigation() {
                 />
                 <div className="absolute inset-0 bg-ff-orange/20 rounded-full blur-md group-hover:bg-ff-orange/30 transition-all"></div>
               </div>
-              <span className="text-xl font-bold text-ff-orange font-gaming">FF PAYALUGA</span>
+              <span className="text-xl font-bold text-ff-orange font-gaming">TN FF BATTLE</span>
             </Link>
             <div className="hidden sm:flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-ff-orange/20 to-ff-gold/20 border border-ff-orange/40 rounded-lg">
               <Flame className="w-4 h-4 text-ff-orange" />
@@ -93,20 +93,18 @@ export default function Navigation() {
                   <Trophy size={18} />
                   <span>Tournament</span>
                 </Link>
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    className="flex items-center space-x-2 text-foreground hover:text-ff-orange transition-colors font-medium relative"
-                  >
-                    <Shield size={18} />
-                    <span>Admin</span>
-                    {pendingCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-ff-orange text-background rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold animate-pulse shadow-ff-orange">
-                        {pendingCount}
-                      </span>
-                    )}
-                  </Link>
-                )}
+                <Link
+                  to="/admin"
+                  className="flex items-center space-x-2 text-foreground hover:text-ff-orange transition-colors font-medium relative"
+                >
+                  <Shield size={18} />
+                  <span>Admin Panel</span>
+                  {isAdmin && pendingCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-ff-orange text-background rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold animate-pulse shadow-ff-orange">
+                      {pendingCount}
+                    </span>
+                  )}
+                </Link>
               </>
             )}
             <GamingButton
@@ -185,21 +183,19 @@ export default function Navigation() {
                   <Trophy size={18} />
                   <span>Tournament</span>
                 </Link>
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    className="flex items-center space-x-2 text-foreground hover:text-ff-orange transition-colors py-2 font-medium relative"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Shield size={18} />
-                    <span>Admin</span>
-                    {pendingCount > 0 && (
-                      <span className="ml-2 bg-ff-orange text-background rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-ff-orange">
-                        {pendingCount}
-                      </span>
-                    )}
-                  </Link>
-                )}
+                <Link
+                  to="/admin"
+                  className="flex items-center space-x-2 text-foreground hover:text-ff-orange transition-colors py-2 font-medium relative"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Shield size={18} />
+                  <span>Admin Panel</span>
+                  {isAdmin && pendingCount > 0 && (
+                    <span className="ml-2 bg-ff-orange text-background rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-ff-orange">
+                      {pendingCount}
+                    </span>
+                  )}
+                </Link>
               </>
             )}
             <GamingButton

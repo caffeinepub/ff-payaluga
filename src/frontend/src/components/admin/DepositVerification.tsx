@@ -1,10 +1,10 @@
-import { useGetPendingDepositRequests, useApproveDeposit, useRejectDeposit } from '../../hooks/useQueries';
+import { useGetPendingDeposits, useApproveDeposit, useRejectDeposit } from '../../hooks/useQueries';
 import GamingButton from '../common/GamingButton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 export default function DepositVerification() {
-  const { data: pendingDeposits, isLoading } = useGetPendingDepositRequests();
+  const { data: pendingDeposits, isLoading } = useGetPendingDeposits();
   const approveDeposit = useApproveDeposit();
   const rejectDeposit = useRejectDeposit();
 

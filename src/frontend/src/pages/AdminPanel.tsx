@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useIsCallerAdmin, useGetPendingDepositRequests } from '../hooks/useQueries';
+import { useGetPendingDeposits } from '../hooks/useQueries';
 import GamingCard from '../components/common/GamingCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import UserManagement from '../components/admin/UserManagement';
@@ -10,15 +10,13 @@ import TournamentConfig from '../components/admin/TournamentConfig';
 import JoinRequestsList from '../components/admin/JoinRequestsList';
 import MatchManagement from '../components/admin/MatchManagement';
 import DirectDeposit from '../components/admin/DirectDeposit';
-import AccessDeniedScreen from '../components/admin/AccessDeniedScreen';
 import AdminPasswordGuard from '../components/admin/AdminPasswordGuard';
 import { Shield, Bell } from 'lucide-react';
 
 export default function AdminPanel() {
   const { identity } = useInternetIdentity();
   const navigate = useNavigate();
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
-  const { data: pendingDeposits } = useGetPendingDepositRequests();
+  const { data: pendingDeposits } = useGetPendingDeposits();
 
   const isAuthenticated = !!identity;
   const pendingCount = pendingDeposits?.length || 0;
@@ -29,7 +27,7 @@ export default function AdminPanel() {
     }
   }, [isAuthenticated, navigate]);
 
-  if (!isAuthenticated || adminLoading) {
+  if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -38,10 +36,6 @@ export default function AdminPanel() {
         </div>
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return <AccessDeniedScreen />;
   }
 
   return (
@@ -90,7 +84,7 @@ export default function AdminPanel() {
               <TabsTrigger value="direct-deposit">Direct Deposit</TabsTrigger>
               <TabsTrigger value="tournament">Tournament</TabsTrigger>
               <TabsTrigger value="matches">Matches</TabsTrigger>
-              <TabsTrigger value="joins">Join Requests</TabsTrigger>
+              <TabsTrigger value="join-requests">Join Requests</TabsTrigger>
             </TabsList>
 
             <TabsContent value="deposits">
@@ -113,7 +107,7 @@ export default function AdminPanel() {
               <MatchManagement />
             </TabsContent>
 
-            <TabsContent value="joins">
+            <TabsContent value="join-requests">
               <JoinRequestsList />
             </TabsContent>
           </Tabs>

@@ -1,79 +1,121 @@
 {
   "kind": "build_request",
-  "title": "Update UI theme to authentic Free Fire battle aesthetics and display owner name NIRANJAN",
-  "projectName": "FF PAYALUGA",
-  "priority": "normal",
+  "title": "Fix actor initialization and deposit network connectivity errors",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-27",
-      "text": "Replace current background styling across all pages with authentic Free Fire battle-themed backgrounds featuring battlefield environments, combat zones, and in-game visual elements characteristic of real Free Fire gameplay.",
+      "id": "REQ-56",
+      "text": "Fix the 'Actor not available' error in WalletDeposit.tsx by ensuring the backend actor is fully initialized before any deposit operations. Add null checks and loading states to prevent premature access to the actor instance.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-current"
         ],
         "quotes": [
-          "Change background and themes in real free fire battle"
+          "Actor not available error showing"
         ]
       },
       "acceptanceCriteria": [
-        "All pages display Free Fire battle-themed backgrounds instead of generic dark gaming backgrounds",
-        "Background imagery reflects actual Free Fire battle environments and combat aesthetics",
-        "Backgrounds maintain visual consistency across the application"
+        "The 'Actor not available' error no longer appears when users access the deposit page",
+        "Actor initialization is verified before rendering deposit form components",
+        "Loading state is displayed while actor initializes",
+        "User-friendly error message is shown if actor fails to initialize"
       ]
     },
     {
-      "id": "REQ-28",
-      "text": "Update the application's color scheme and theme styling to match authentic Free Fire battle aesthetics, including Free Fire's signature color palette, UI patterns from the actual game, and combat-inspired visual elements throughout all components and pages.",
+      "id": "REQ-57",
+      "text": "Resolve deposit network connectivity issues in WalletDeposit.tsx by improving the actor connection sequence. Ensure canister ID resolution, authentication state verification, and actor creation all complete successfully before allowing deposit submission.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-current"
         ],
         "quotes": [
-          "Change background and themes in real free fire battle"
+          "deposit network issue showing"
         ]
       },
       "acceptanceCriteria": [
-        "Color scheme reflects authentic Free Fire game colors and battle UI patterns",
-        "All gaming-themed components (buttons, cards, navigation) use Free Fire battle-inspired styling",
-        "Theme maintains cohesion with Free Fire's actual in-game interface aesthetics"
+        "Users can successfully submit deposit requests without network errors",
+        "Connection state is properly validated before deposit operations",
+        "Network failures trigger automatic retry logic with exponential backoff",
+        "Clear error messages guide users when network issues occur"
       ]
     },
     {
-      "id": "REQ-29",
-      "text": "Display the owner name 'NIRANJAN' prominently in the application interface, ensuring it is clearly visible and appropriately styled to match the Free Fire battle theme.",
+      "id": "REQ-58",
+      "text": "Add defensive checks in the deposit submission flow to verify the actor instance exists and is ready before calling backend methods. Wrap all actor method calls in try-catch blocks with specific error handling for actor availability issues.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-current"
         ],
         "quotes": [
-          "the owner name is NIRANJAN"
+          "Actor not available error showing"
         ]
       },
       "acceptanceCriteria": [
-        "Owner name 'NIRANJAN' is displayed in a prominent location visible to users",
-        "Name styling is consistent with Free Fire battle theme aesthetics",
-        "Text is clearly readable against the battle-themed background"
+        "All backend actor method calls are protected with existence checks",
+        "Try-catch blocks capture and handle actor-related errors gracefully",
+        "Users see specific error messages for different failure scenarios",
+        "Failed operations can be retried without refreshing the page"
+      ]
+    },
+    {
+      "id": "REQ-59",
+      "text": "Enhance the useActor hook to ensure it returns a stable, initialized actor instance with proper error state management. Add validation to confirm the actor is ready before returning it to consuming components.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-current"
+        ],
+        "quotes": [
+          "Actor not available error showing",
+          "deposit network issue showing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useActor hook validates actor readiness before returning instance",
+        "Hook provides clear error states when actor initialization fails",
+        "Consuming components can reliably detect when actor is unavailable",
+        "Actor instance remains stable across component re-renders"
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "text": "Add comprehensive error logging in WalletDeposit.tsx to capture the full actor initialization and deposit submission flow. Log actor creation status, canister ID resolution, authentication state, connection attempts, and all thrown exceptions to diagnose network issues.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-current"
+        ],
+        "quotes": [
+          "deposit network issue showing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Console logs capture all critical steps in the actor initialization sequence",
+        "Error logs include stack traces and relevant state information",
+        "Network request failures are logged with response details",
+        "Logs help identify whether issues are authentication, network, or actor-related"
       ]
     }
   ],
   "constraints": [
-    "Maintain existing functionality while updating visual theme",
-    "Keep mobile responsiveness intact during theme changes",
-    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, components/ui"
+    "Do not modify the backend/main.mo actor implementation",
+    "Maintain the existing single-actor architecture",
+    "Do not change the authentication flow or Internet Identity integration",
+    "Preserve all existing error retry logic with exponential backoff",
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx"
   ],
   "nonGoals": [
-    "Changing application functionality or features",
-    "Modifying backend logic or data structures",
-    "Altering user authentication or admin systems"
+    "Redesigning the deposit page UI",
+    "Changing the UPI payment flow or displayed UPI ID",
+    "Modifying deposit amount validation rules",
+    "Adding new features beyond fixing the actor and network errors",
+    "Changing the admin panel authentication or password"
   ],
   "imageRequirements": {
-    "required": [
-      "Free Fire battle background with combat zone environment and battlefield elements (ff-battle-bg.dim_1920x1080.png)",
-      "Free Fire themed header background with game UI elements (ff-header-bg.dim_1200x400.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

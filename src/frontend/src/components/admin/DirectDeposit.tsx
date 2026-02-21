@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetAllUsers, useAdminDirectDeposit, useGetAllDirectDeposits } from '../../hooks/useQueries';
+import { useGetAllUsers, useAdminDirectDeposit, useGetDirectDepositHistory } from '../../hooks/useQueries';
 import GamingButton from '../common/GamingButton';
 import GamingCard from '../common/GamingCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export default function DirectDeposit() {
   const { data: users, isLoading: usersLoading } = useGetAllUsers();
-  const { data: transactions, isLoading: transactionsLoading } = useGetAllDirectDeposits();
+  const { data: transactions, isLoading: transactionsLoading } = useGetDirectDepositHistory();
   const adminDirectDeposit = useAdminDirectDeposit();
 
   const [selectedUserId, setSelectedUserId] = useState<string>('');
@@ -39,7 +39,7 @@ export default function DirectDeposit() {
 
     await adminDirectDeposit.mutateAsync({
       userId: BigInt(selectedUserId),
-      coinsAdded: BigInt(coins),
+      amount: BigInt(coins),
     });
 
     setSelectedUserId('');
