@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Tournament entry payment system using ZAP UPI API with secure backend, webhook verification, database storage, and slot management.",
+  "architectural_notes": [
+    "ZAP UPI API integration: API key in Authorization header, HMAC SHA256 webhook signature verification using secret key",
+    "Payment amount fixed at 5000 paise (₹50), currency INR",
+    "Max tournament slots: 50 players; order creation blocked at or above this limit"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-tournament-entry-payment-page-in-the-frontend-e-g-frontend-src-pages-tournamententry-tsx-with-a-form-collecting-player-name-and-free-fire-game-id-on-submit-call-the-backend-createorder-function-and-redirect-the-user-to-the-returned-zap-payment-url-show-an-error-if-slots-are-full-count-50-display-current-slot-availability-e-g-x-50-slots-filled-style-consistently-with-the-existing-free-fire-battle-theme-gamingcard-gamingbutton-components-ff-orange-ff-cyan-palette",
+      "title": "Create a Tournament Entry / Payment page in the frontend (e.g. `frontend/src/pages/TournamentEntry.tsx`) with a form collecting player name and Free Fire Game ID. On submit, call the backend `createOrder` function and redirect the user to the returned ZAP payment URL. Show an error if slots are full (count >= 50). Display current slot availability (e.g. 'X / 50 slots filled'). Style consistently with the existing Free Fire battle theme (GamingCard, GamingButton components, ff-orange/ff-cyan palette).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-route-for-the-tournament-entry-page-to-frontend-src-app-tsx-e-g-tournament-entry-and-add-a-navigation-link-to-it-in-frontend-src-components-layout-navigation-tsx-visible-to-authenticated-users",
+      "title": "Add a route for the Tournament Entry page to `frontend/src/App.tsx` (e.g. `/tournament-entry`) and add a navigation link to it in `frontend/src/components/layout/Navigation.tsx` visible to authenticated users.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-section-to-the-existing-admin-dashboard-page-frontend-src-pages-admindashboard-tsx-that-displays-the-list-of-tournament-entries-name-game-id-payment-id-status-created-at-fetched-via-the-admin-only-gettournamententries-backend-query-show-total-confirmed-entries-and-total-slot-usage",
+      "title": "Add a section to the existing Admin Dashboard page (`frontend/src/pages/AdminDashboard.tsx`) that displays the list of tournament entries (name, game_id, payment_id, status, created_at) fetched via the admin-only `getTournamentEntries` backend query. Show total confirmed entries and total slot usage.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "POST /create-order endpoint: accept name & gameId, call ZAP API (amount 5000 INR), return payment URL",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "POST /webhook endpoint: verify ZAP HMAC SHA256 signature, save confirmed player entries on SUCCESS",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Create tournament_entries table with id, name, game_id, payment_id, status, created_at fields",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Slot limit logic: block new order creation when player count >= 50",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Security: use env vars for API/secret keys, never expose secret to frontend, enable CORS properly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Create a `tournament_entries` stable data structure in the Motoko backend actor to store tournament entry records with fields: id (auto-incremented Nat), name (Text), game_id (Text), payment_id (Text), status (Text, e.g. 'PENDING' or 'CONFIRMED'), and created_at (Int timestamp). Use a stable var array or HashMap keyed by id.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add a `createOrder` update function to the Motoko backend actor that: (1) accepts name (Text) and gameId (Text), (2) checks if the current confirmed+pending entry count is >= 50 and returns an error if so, (3) makes an outgoing HTTP call to the ZAP UPI API to create a payment order with amount 5000, currency INR, using the ZAP API key in the Authorization header (stored as a canister environment constant, never exposed to frontend), (4) parses the returned payment URL from the ZAP API response, (5) creates a PENDING entry in tournament_entries, and (6) returns the payment URL to the caller.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Add a `handleWebhook` update function to the Motoko backend actor that: (1) accepts the raw request body (Text) and a ZAP-Signature header value (Text), (2) verifies the HMAC SHA256 signature using the stored ZAP Secret Key constant against the raw body, (3) if verification fails returns an error, (4) if payment status in the payload equals 'SUCCESS', finds the matching tournament_entry by paymentId, updates status to 'CONFIRMED', saves player name, game_id, and payment_id, (5) returns `{ success: true }` on success.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Store the ZAP API key and ZAP Secret Key as canister-level private constants in backend/main.mo (not in frontend code, not passed through query parameters). Add a query function `getEntryCount` returning the current number of tournament entries, and a query function `getTournamentEntries` (admin-only) returning the full list of entries.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Tournament Entry Payment System",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

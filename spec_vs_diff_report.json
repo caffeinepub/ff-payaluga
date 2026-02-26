@@ -1,0 +1,53 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-26T21:45:03.402Z",
+  "summary": "The diff implements most requirements across frontend and backend. Frontend pages, routing, navigation, and admin dashboard sections are well-covered. However, the backend/main.mo diff is truncated and does not show evidence of the new tournament_entries data structure, createOrder, handleWebhook, getEntryCount, or getTournamentEntries functions being implemented. REQ-3 (HMAC SHA256 webhook verification) is particularly concerning as it requires cryptographic operations in Motoko with no visible implementation.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Create a stable tournament_entries data structure in backend/main.mo with fields: id, name, game_id, payment_id, status, created_at; IDs auto-incremented from 1.",
+      "reason": "The backend/main.mo diff is truncated and shows only existing types and data structures. No TournamentEntry type, stable var array/HashMap for tournament_entries, or nextTournamentEntryId counter is visible in the diff.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Add a createOrder update function that checks slot count >= 50, calls ZAP UPI API with amount 5000 INR and API key in Authorization header, creates a PENDING entry, and returns the payment URL.",
+      "reason": "The truncated backend/main.mo diff does not show a createOrder function. The ZAP API key constant and outgoing HTTP call logic are not visible anywhere in the diff.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Add a handleWebhook update function that verifies HMAC SHA256 signature using ZAP Secret Key, updates entry status to CONFIRMED on SUCCESS, and returns success indicator.",
+      "reason": "No handleWebhook function or HMAC SHA256 verification logic is visible in the truncated backend/main.mo diff. The ZAP Secret Key constant is also not visible.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Store ZAP API key and Secret Key as private canister-level constants; add getEntryCount (public) and getTournamentEntries (admin-only) query functions.",
+      "reason": "The backend/main.mo diff does not show ZAP API key/secret key constants, getEntryCount function, or getTournamentEntries function. The frontend hooks useGetEntryCount and useGetTournamentEntries are present in useQueries.ts implying these backend functions should exist, but their backend implementations are not visible in the diff.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.55,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/Navigation.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminDashboard.tsx",
+    "frontend/src/pages/TournamentEntry.tsx",
+    "project_state.json"
+  ]
+}

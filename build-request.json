@@ -1,0 +1,175 @@
+{
+  "kind": "build_request",
+  "title": "Tournament Entry Payment System with ZAP UPI API",
+  "projectName": "TN FF Battle",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create a `tournament_entries` stable data structure in the Motoko backend actor to store tournament entry records with fields: id (auto-incremented Nat), name (Text), game_id (Text), payment_id (Text), status (Text, e.g. 'PENDING' or 'CONFIRMED'), and created_at (Int timestamp). Use a stable var array or HashMap keyed by id.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Create database table: tournament_entries Fields: id (auto), name, game_id, payment_id, status, created_at"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A stable data structure for tournament_entries exists in backend/main.mo",
+        "Each entry stores id, name, game_id, payment_id, status, and created_at",
+        "IDs are auto-incremented starting from 1"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add a `createOrder` update function to the Motoko backend actor that: (1) accepts name (Text) and gameId (Text), (2) checks if the current confirmed+pending entry count is >= 50 and returns an error if so, (3) makes an outgoing HTTP call to the ZAP UPI API to create a payment order with amount 5000, currency INR, using the ZAP API key in the Authorization header (stored as a canister environment constant, never exposed to frontend), (4) parses the returned payment URL from the ZAP API response, (5) creates a PENDING entry in tournament_entries, and (6) returns the payment URL to the caller.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Create a backend endpoint: POST /create-order",
+          "Accept name and gameId",
+          "Call ZAP API to create payment order",
+          "Use API key in Authorization header",
+          "Amount: 5000 (₹50)",
+          "Currency: INR",
+          "Return payment URL to frontend",
+          "Max players: 50",
+          "If count >= 50, block new order creation"
+        ]
+      },
+      "acceptanceCriteria": [
+        "createOrder function rejects with an error message when confirmed player count >= 50",
+        "createOrder calls ZAP API with amount 5000, currency INR, and Authorization header containing the API key",
+        "A PENDING entry is created in tournament_entries upon successful order creation",
+        "The payment URL returned by ZAP API is returned to the frontend caller",
+        "ZAP API key is defined as a canister-side constant and never sent to the frontend"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add a `handleWebhook` update function to the Motoko backend actor that: (1) accepts the raw request body (Text) and a ZAP-Signature header value (Text), (2) verifies the HMAC SHA256 signature using the stored ZAP Secret Key constant against the raw body, (3) if verification fails returns an error, (4) if payment status in the payload equals 'SUCCESS', finds the matching tournament_entry by paymentId, updates status to 'CONFIRMED', saves player name, game_id, and payment_id, (5) returns `{ success: true }` on success.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Create webhook endpoint: POST /webhook",
+          "Verify ZAP signature using HMAC SHA256 with my Secret Key",
+          "If payment status = SUCCESS: Save player name, Save gameId, Save paymentId, Mark status as CONFIRMED",
+          "Return 200 OK",
+          "Return JSON: { success: true }"
+        ]
+      },
+      "acceptanceCriteria": [
+        "handleWebhook rejects requests with invalid HMAC SHA256 signatures",
+        "Entries with matching paymentId are updated to status CONFIRMED when payload contains SUCCESS",
+        "The function returns a success indicator on valid, successful webhook processing",
+        "ZAP Secret Key is stored only on the backend, never exposed to the frontend"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Store the ZAP API key and ZAP Secret Key as canister-level private constants in backend/main.mo (not in frontend code, not passed through query parameters). Add a query function `getEntryCount` returning the current number of tournament entries, and a query function `getTournamentEntries` (admin-only) returning the full list of entries.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Do not expose secret key in frontend",
+          "Use environment variables for API and Secret key"
+        ]
+      },
+      "acceptanceCriteria": [
+        "ZAP API key and Secret Key are defined only in backend/main.mo as private constants",
+        "No key values appear in any frontend file",
+        "getEntryCount query is publicly accessible",
+        "getTournamentEntries query is restricted to the admin principal"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Create a Tournament Entry / Payment page in the frontend (e.g. `frontend/src/pages/TournamentEntry.tsx`) with a form collecting player name and Free Fire Game ID. On submit, call the backend `createOrder` function and redirect the user to the returned ZAP payment URL. Show an error if slots are full (count >= 50). Display current slot availability (e.g. 'X / 50 slots filled'). Style consistently with the existing Free Fire battle theme (GamingCard, GamingButton components, ff-orange/ff-cyan palette).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Accept name and gameId",
+          "Return payment URL to frontend",
+          "If count >= 50, block new order creation"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Form collects name and gameId fields with validation",
+        "Slot count is fetched and displayed; form is disabled when slots >= 50",
+        "Successful order creation redirects user to the ZAP payment URL",
+        "Error states (full slots, API failure) are shown with user-friendly messages in English",
+        "Page uses GamingCard and GamingButton components and matches the Free Fire battle theme"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Add a route for the Tournament Entry page to `frontend/src/App.tsx` (e.g. `/tournament-entry`) and add a navigation link to it in `frontend/src/components/layout/Navigation.tsx` visible to authenticated users.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "Create a secure tournament entry payment system"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Route /tournament-entry renders the TournamentEntry page",
+        "Navigation bar shows a 'Tournament Entry' link for authenticated users",
+        "Routing integrates cleanly with the existing TanStack Router setup in App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add a section to the existing Admin Dashboard page (`frontend/src/pages/AdminDashboard.tsx`) that displays the list of tournament entries (name, game_id, payment_id, status, created_at) fetched via the admin-only `getTournamentEntries` backend query. Show total confirmed entries and total slot usage.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "tournament_entries Fields: id (auto), name, game_id, payment_id, status, created_at"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin Dashboard shows a table of tournament entries with all fields",
+        "Total confirmed entries and slot usage (X/50) are displayed",
+        "Data is fetched using React Query and the existing admin actor pattern",
+        "Section is only visible to authenticated admin users"
+      ]
+    }
+  ],
+  "constraints": [
+    "ZAP API key and Secret Key must never appear in any frontend file or be returned by any public query",
+    "All Motoko logic must remain in backend/main.mo (single-actor architecture)",
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "HMAC SHA256 signature verification must be performed on the backend only",
+    "Slot limit of 50 max players must be enforced on the backend, not just the frontend"
+  ],
+  "nonGoals": [
+    "Implementing a custom payment gateway other than ZAP UPI API",
+    "Real-time WebSocket notifications for payment status",
+    "Email or SMS confirmation messages to players",
+    "Stripe or any non-UPI payment method",
+    "Exposing raw webhook payloads to the frontend",
+    "Multi-tournament support (single tournament slot pool only)"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Tournament Entry Payment System with ZAP UPI API - Frontend",
+  "requirements": [
+    {
+      "id": "REQ-5",
+      "summary": "Create Tournament Entry / Payment page with form for player name and Free Fire Game ID, slot availability display, and ZAP payment URL redirect",
+      "acceptanceCriteria": [
+        "Form collects name and gameId fields with validation",
+        "Slot count is fetched and displayed; form is disabled when slots >= 50",
+        "Successful order creation redirects user to the ZAP payment URL",
+        "Error states (full slots, API failure) are shown with user-friendly messages in English",
+        "Page uses GamingCard and GamingButton components and matches the Free Fire battle theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/TournamentEntry.tsx",
+          "operation": "create",
+          "description": "Create TournamentEntry page component with form collecting player name and Free Fire Game ID. Fetch current slot count via backend getEntryCount query. Display slot availability (X/50). On form submit, call backend createOrder function with name and gameId. If successful, redirect user to the returned ZAP payment URL using window.location.href. Show error if slots >= 50 or API call fails. Use GamingCard for container, GamingButton for submit, and ff-orange/ff-cyan color palette. Include form validation for required fields. Handle loading states during API calls."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useGetEntryCount hook that calls backend getEntryCount query function, returning the current number of tournament entries. Add useCreateOrder mutation hook that accepts { name: string, gameId: string }, calls backend createOrder function, handles success (returns payment URL) and error states (slot limit reached, API failure), and shows toast notifications. Use existing React Query patterns and error handling conventions from the file."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add route for Tournament Entry page and navigation link for authenticated users",
+      "acceptanceCriteria": [
+        "Route /tournament-entry renders the TournamentEntry page",
+        "Navigation bar shows a 'Tournament Entry' link for authenticated users",
+        "Routing integrates cleanly with the existing TanStack Router setup in App.tsx"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a new route for /tournament-entry that renders the TournamentEntry page component. Follow the existing TanStack Router route registration pattern used for home, login, dashboard, wallet, tournament, and admin routes. Import TournamentEntry from frontend/src/pages/TournamentEntry.tsx."
+        },
+        {
+          "path": "frontend/src/components/layout/Navigation.tsx",
+          "operation": "modify",
+          "description": "Add a navigation link for 'Tournament Entry' that routes to /tournament-entry. Show this link only to authenticated users (when isAuthenticated is true). Place the link near the existing Tournament link in the navigation menu. Ensure it works in both desktop and mobile responsive layouts."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add tournament entries section to Admin Dashboard displaying entries table with all fields and slot usage statistics",
+      "acceptanceCriteria": [
+        "Admin Dashboard shows a table of tournament entries with all fields",
+        "Total confirmed entries and slot usage (X/50) are displayed",
+        "Data is fetched using React Query and the existing admin actor pattern",
+        "Section is only visible to authenticated admin users"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminDashboard.tsx",
+          "operation": "modify",
+          "description": "Add a new section to the existing Admin Dashboard page that displays tournament entries. Use a GamingCard container. Show slot usage statistics at the top (e.g., 'X/50 slots filled', 'Y confirmed entries'). Display a table listing all tournament entries with columns: name, game_id, payment_id, status, created_at (formatted timestamp). Fetch data using a new React Query hook (useGetTournamentEntries) that calls the admin-only getTournamentEntries backend query. Show loading states and error messages. Ensure the section respects existing admin authentication checks in the page."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useGetTournamentEntries hook that calls backend getTournamentEntries query (admin-only). Return array of tournament entry objects with fields: id, name, game_id, payment_id, status, created_at. Handle authentication errors gracefully with toast notifications. Use existing React Query patterns and the admin actor from useActor hook."
+        }
+      ]
+    }
+  ]
+}

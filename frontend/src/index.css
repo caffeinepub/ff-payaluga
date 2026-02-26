@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+        --background: 0.12 0.02 280;
+        --foreground: 0.985 0 0;
+        --card: 0.18 0.03 275;
+        --card-foreground: 0.985 0 0;
+        --popover: 0.22 0.03 270;
+        --popover-foreground: 0.985 0 0;
+        --primary: 0.68 0.24 35;
+        --primary-foreground: 0.98 0 0;
+        --secondary: 0.55 0.20 195;
+        --secondary-foreground: 0.98 0 0;
+        --muted: 0.25 0.02 280;
+        --muted-foreground: 0.70 0.02 280;
+        --accent: 0.72 0.22 45;
+        --accent-foreground: 0.98 0 0;
+        --destructive: 0.60 0.25 25;
+        --destructive-foreground: 0.985 0 0;
+        --border: 0.68 0.24 35 / 20%;
+        --input: 0.68 0.24 35 / 15%;
+        --ring: 0.68 0.24 35;
+        --chart-1: 0.68 0.24 35;
+        --chart-2: 0.55 0.20 195;
+        --chart-3: 0.75 0.22 120;
+        --chart-4: 0.65 0.20 280;
+        --chart-5: 0.70 0.18 15;
+        --sidebar: 0.18 0.03 275;
+        --sidebar-foreground: 0.985 0 0;
+        --sidebar-primary: 0.68 0.24 35;
+        --sidebar-primary-foreground: 0.985 0 0;
+        --sidebar-accent: 0.25 0.02 280;
+        --sidebar-accent-foreground: 0.985 0 0;
+        --sidebar-border: 0.68 0.24 35 / 20%;
+        --sidebar-ring: 0.68 0.24 35;
+        
+        /* Free Fire Battle Theme Colors - Authentic Game UI */
+        --ff-orange: 0.68 0.24 35;
+        --ff-cyan: 0.75 0.20 195;
+        --ff-gold: 0.78 0.18 65;
+        --ff-red: 0.58 0.26 25;
+        --ff-green: 0.72 0.20 145;
+    }
+
+    .dark {
+        --background: 0.12 0.02 280;
+        --foreground: 0.985 0 0;
+        --card: 0.18 0.03 275;
+        --card-foreground: 0.985 0 0;
+        --popover: 0.22 0.03 270;
+        --popover-foreground: 0.985 0 0;
+        --primary: 0.68 0.24 35;
+        --primary-foreground: 0.98 0 0;
+        --secondary: 0.55 0.20 195;
+        --secondary-foreground: 0.98 0 0;
+        --muted: 0.25 0.02 280;
+        --muted-foreground: 0.70 0.02 280;
+        --accent: 0.72 0.22 45;
+        --accent-foreground: 0.98 0 0;
+        --destructive: 0.60 0.25 25;
+        --destructive-foreground: 0.985 0 0;
+        --border: 0.68 0.24 35 / 20%;
+        --input: 0.68 0.24 35 / 15%;
+        --ring: 0.68 0.24 35;
+        --chart-1: 0.68 0.24 35;
+        --chart-2: 0.55 0.20 195;
+        --chart-3: 0.75 0.22 120;
+        --chart-4: 0.65 0.20 280;
+        --chart-5: 0.70 0.18 15;
+        --sidebar: 0.18 0.03 275;
+        --sidebar-foreground: 0.985 0 0;
+        --sidebar-primary: 0.68 0.24 35;
+        --sidebar-primary-foreground: 0.985 0 0;
+        --sidebar-accent: 0.25 0.02 280;
+        --sidebar-accent-foreground: 0.985 0 0;
+        --sidebar-border: 0.68 0.24 35 / 20%;
+        --sidebar-ring: 0.68 0.24 35;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Rajdhani', 'Orbitron', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background-image: url('/assets/generated/ff-battle-bg.dim_1920x1080.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+    
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, 
+            rgba(15, 10, 30, 0.85) 0%, 
+            rgba(20, 15, 40, 0.75) 50%, 
+            rgba(15, 10, 30, 0.85) 100%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .bg-gaming-texture {
+        background-image: url('/assets/generated/ff-battle-bg.dim_1920x1080.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    
+    .ff-battle-overlay {
+        position: relative;
+    }
+    
+    .ff-battle-overlay::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, 
+            rgba(255, 100, 30, 0.05) 0%, 
+            transparent 50%, 
+            rgba(0, 200, 255, 0.05) 100%);
+        pointer-events: none;
+    }
+}
+
+@layer utilities {
+    .text-ff-orange {
+        color: oklch(var(--ff-orange));
+    }
+    
+    .text-ff-cyan {
+        color: oklch(var(--ff-cyan));
+    }
+    
+    .text-ff-gold {
+        color: oklch(var(--ff-gold));
+    }
+    
+    .text-ff-red {
+        color: oklch(var(--ff-red));
+    }
+    
+    .text-ff-green {
+        color: oklch(var(--ff-green));
+    }
+    
+    .bg-ff-orange {
+        background-color: oklch(var(--ff-orange));
+    }
+    
+    .bg-ff-cyan {
+        background-color: oklch(var(--ff-cyan));
+    }
+    
+    .bg-ff-gold {
+        background-color: oklch(var(--ff-gold));
+    }
+    
+    .bg-ff-red {
+        background-color: oklch(var(--ff-red));
+    }
+    
+    .bg-ff-green {
+        background-color: oklch(var(--ff-green));
+    }
+    
+    .border-ff-orange {
+        border-color: oklch(var(--ff-orange));
+    }
+    
+    .border-ff-cyan {
+        border-color: oklch(var(--ff-cyan));
+    }
+    
+    .border-ff-gold {
+        border-color: oklch(var(--ff-gold));
+    }
+    
+    .text-shadow-ff {
+        text-shadow: 0 0 10px rgba(255, 100, 30, 0.8), 
+                     0 0 20px rgba(255, 100, 30, 0.4),
+                     2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    
+    .text-shadow-cyan {
+        text-shadow: 0 0 10px rgba(0, 200, 255, 0.8), 
+                     0 0 20px rgba(0, 200, 255, 0.4),
+                     2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    
+    .glow-ff-orange {
+        box-shadow: 0 0 20px rgba(255, 100, 30, 0.4),
+                    0 0 40px rgba(255, 100, 30, 0.2),
+                    inset 0 0 20px rgba(255, 100, 30, 0.1);
+    }
+    
+    .glow-ff-cyan {
+        box-shadow: 0 0 20px rgba(0, 200, 255, 0.4),
+                    0 0 40px rgba(0, 200, 255, 0.2),
+                    inset 0 0 20px rgba(0, 200, 255, 0.1);
+    }
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-tournament-entry-payment-page-in-the-frontend-e-g-frontend-src-pages-tournamententry-tsx-with-a-form-collecting-player-name-and-free-fire-game-id-on-submit-call-the-backend-createorder-function-and-redirect-the-user-to-the-returned-zap-payment-url-show-an-error-if-slots-are-full-count-50-display-current-slot-availability-e-g-x-50-slots-filled-style-consistently-with-the-existing-free-fire-battle-theme-gamingcard-gamingbutton-components-ff-orange-ff-cyan-palette",
+      "featureTitle": "Create a Tournament Entry / Payment page in the frontend (e.g. `frontend/src/pages/TournamentEntry.tsx`) with a form collecting player name and Free Fire Game ID. On submit, call the backend `createOrder` function and redirect the user to the returned ZAP payment URL. Show an error if slots are full (count >= 50). Display current slot availability (e.g. 'X / 50 slots filled'). Style consistently with the existing Free Fire battle theme (GamingCard, GamingButton components, ff-orange/ff-cyan palette).",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/TournamentEntry.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-route-for-the-tournament-entry-page-to-frontend-src-app-tsx-e-g-tournament-entry-and-add-a-navigation-link-to-it-in-frontend-src-components-layout-navigation-tsx-visible-to-authenticated-users",
+      "featureTitle": "Add a route for the Tournament Entry page to `frontend/src/App.tsx` (e.g. `/tournament-entry`) and add a navigation link to it in `frontend/src/components/layout/Navigation.tsx` visible to authenticated users.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/Navigation.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-section-to-the-existing-admin-dashboard-page-frontend-src-pages-admindashboard-tsx-that-displays-the-list-of-tournament-entries-name-game-id-payment-id-status-created-at-fetched-via-the-admin-only-gettournamententries-backend-query-show-total-confirmed-entries-and-total-slot-usage",
+      "featureTitle": "Add a section to the existing Admin Dashboard page (`frontend/src/pages/AdminDashboard.tsx`) that displays the list of tournament entries (name, game_id, payment_id, status, created_at) fetched via the admin-only `getTournamentEntries` backend query. Show total confirmed entries and total slot usage.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
